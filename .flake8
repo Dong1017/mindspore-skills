@@ -1,0 +1,15 @@
+[flake8]
+max-line-length = 160
+extend-exclude =
+    docs/*,
+    setup.py,
+	.claude/*
+extend-ignore = E203,E731
+per-file-ignores =
+    */__init__.py:F401,F403
+    mindone/mindone/models/threestudio/*/__init__.py,mindone/mindone/models/threestudio/__init__.py:F401,E402
+    mindone/examples/*,tests/*,mindone/mindone/models/threestudio/*:E402
+    mindone/examples/stable_diffusion_v2/ldm/models/diffusion/dpm_solver/dpm_solver.py:W605
+    mindone/examples/stable_diffusion_v2/ldm/models/diffusion/uni_pc/uni_pc.py:W605
+    mindone/examples/text2video_zero/ldm/models/diffusion/dpm_solver/dpm_solver.py:W605
+    mindone/examples/text2video_zero/ldm/models/diffusion/uni_pc/uni_pc.py:W605
