@@ -50,15 +50,14 @@ See the official [SUPPORT_LIST.md](https://github.com/mindspore-lab/mindone/blob
 # MindOne (MindSpore):
 import mindspore as ms
 from mindspore import nn
-from diffusers.models.layers_compat import (
+from mindone.diffusers.models.layers_compat import (
     conv_transpose2d,
     interpolate,
     scaled_dot_product_attention,
-    group_norm,
 )
 
 # Model classes have similar APIs but use nn.Cell instead of nn.Module
-from diffusers import UNet2DConditionModel
+from mindone.diffusers import UNet2DConditionModel
 
 model = UNet2DConditionModel.from_pretrained("path/to/mindspore/weights")
 ```
@@ -126,6 +125,7 @@ See `references/` directory for detailed analysis:
 - [04-model-architecture.md](references/04-model-architecture.md) - Specific model implementation differences
 - [05-mindone-specific.md](references/05-mindone-specific.md) - Components unique to mindone
 - [06-pipeline-migration.md](references/06-pipeline-migration.md) - Step-by-step migration workflow
+- [07-migration-analysis.md](references/07-migration-analysis.md) - Current support status and migration priority matrix
 
 ## Examples
 

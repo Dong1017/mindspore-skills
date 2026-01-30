@@ -25,3 +25,4 @@ MindOne diffusers tracks HuggingFace diffusers releases. Check the official [SUP
 4. [Model Architecture Differences](04-model-architecture.md) - Specific model implementation differences
 5. [MindOne-Specific Components](05-mindone-specific.md) - Components unique to mindone
 6. [Pipeline Migration Guide](06-pipeline-migration.md) - Step-by-step migration workflow
+7. [Migration Analysis](07-migration-analysis.md) - Current support status and migration priority matrix
