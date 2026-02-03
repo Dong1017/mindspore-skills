@@ -1,187 +1,152 @@
 ---
 name: hf-diffusers-migrate
-description: Migrate Hugging Face diffusers models to mindone.diffusers. Use when porting Stable Diffusion, SDXL, ControlNet, or other diffusion models.
+description: Migrate Hugging Face diffusers models to mindone.diffusers. Uses auto_convert.py for automated conversion.
 ---
 
 # HF Diffusers Migration
 
-Migrate Hugging Face diffusers models to MindOne's diffusers implementation.
+Migrate Hugging Face diffusers models (PyTorch) to mindone.diffusers (MindSpore) using automated code conversion.
 
 ## When to Use
 
-- Porting Stable Diffusion models to MindSpore
-- Migrating SDXL, ControlNet, LoRA adapters
-- Converting diffusers pipelines to mindone
-- Adding new diffusion model architectures
-- Converting attention operations for MindSpore (Ascend/GPU)
+- Porting Stable Diffusion, SDXL, SD3, Flux, ControlNet, or other diffusion models
+- Converting diffusers pipelines to MindSpore framework
+- Migrating attention operations for Ascend NPU/GPU backends
 
-## Target Repository & Versions
+## Supported Models
 
-**mindone.diffusers**: https://github.com/mindspore-lab/mindone
+Check [SUPPORT_LIST.md](https://github.com/mindspore-lab/mindone/blob/master/mindone/diffusers/SUPPORT_LIST.md) for current status (240+ pipelines):
+- Base: SD 1.x, SD 2.x, SDXL, SD3, Flux, Flux2
+- Video: AnimateDiff, SVD, CogVideoX, Mochi
+- Conditioning: ControlNet, LoRA, IP-Adapter, T2I-Adapter
+- Text-to-Image: PixArt, Sana, Lumina, AuraFlow
 
-**Version Compatibility**: Check the official [SUPPORT_LIST.md](https://github.com/mindspore-lab/mindone/blob/master/mindone/diffusers/SUPPORT_LIST.md) for current version compatibility. MindOne tracks HF diffusers releases and provides support for new versions.
+## Workflow
 
-**Note**: Version compatibility evolves as mindone tracks new HF diffusers releases. Always check the latest version information in the mindone repository.
-
-### Checking Support Status
-
-See the official [SUPPORT_LIST.md](https://github.com/mindspore-lab/mindone/blob/master/mindone/diffusers/SUPPORT_LIST.md) in the mindone repository for the current support matrix showing:
-- Which pipelines are verified with fp32/fp16/bf16 precision
-- Inference verification status with official weights
-- 240+ diffusion pipelines supported
-
-## Supported Model Types
-
-- **Base Models**: SD 1.x, SD 2.x, SDXL, SD3, Flux, Flux2
-- **ControlNet**: Various conditioning models
-- **Adapters**: LoRA, IP-Adapter, T2I-Adapter
-- **Video**: AnimateDiff, SVD, CogVideoX, Mochi, etc.
-- **Text-to-Image**: PixArt, Sana, Lumina, AuraFlow, etc.
-- **Inpainting/Outpainting**: Specialized pipelines
-
-## Quick Start
-
-```python
-# Basic import mapping example
-# HF (PyTorch):
-#   import torch
-#   from torch.nn import Linear, Conv2d
-
-# MindOne (MindSpore):
-import mindspore as ms
-from mindspore import nn
-from mindone.diffusers.models.layers_compat import (
-    conv_transpose2d,
-    interpolate,
-    scaled_dot_product_attention,
-)
-
-# Model classes have similar APIs but use nn.Cell instead of nn.Module
-from mindone.diffusers import UNet2DConditionModel
-
-model = UNet2DConditionModel.from_pretrained("path/to/mindspore/weights")
+```
+1. Analyze HF source → 2. Run auto_convert.py → 3. Manual fixes → 4. Validate
 ```
 
-## Instructions
+## Step 1: Analyze HF Source
 
-### Step 1: Analyze Source Model
+Before running conversion, identify dependencies and files to migrate.
 
-1. Identify the HF diffusers model architecture
-2. Check if similar architecture exists in mindone.diffusers (see official [SUPPORT_LIST.md](https://github.com/mindspore-lab/mindone/blob/master/mindone/diffusers/SUPPORT_LIST.md))
-3. Document API differences between HF and mindone
-4. Note the HF diffusers version - API mappings may differ by version
+**Check support status:**
+1. [SUPPORT_LIST.md](https://github.com/mindspore-lab/mindone/blob/master/mindone/diffusers/SUPPORT_LIST.md) - is model already supported?
+2. Note HF diffusers version - API compatibility may vary
 
-### Step 2: Import Mapping
+**List mindone utility dependencies required:**
+```
+mindone.diffusers.models.layers_compat
+  - scaled_dot_product_attention
+  - conv_transpose2d
+  - interpolate
 
-Replace PyTorch imports with MindSpore equivalents:
+mindone.diffusers.utils
+  - randn_tensor  (from diffusers.utils.torch_utils)
 
-| PyTorch | MindSpore | Notes |
-|---------|-----------|-------|
-| `import torch` | `import mindspore as ms` | Main framework |
-| `torch.nn.Module` | `mindspore.nn.Cell` | Base class |
-| `forward()` | `construct()` | Method name |
-| `torch.Tensor` | `ms.Tensor` | Type annotation |
-| `F.scaled_dot_product_attention` | `scaled_dot_product_attention` | From layers_compat |
-| `F.conv_transpose2d` | `conv_transpose2d` | From layers_compat |
-| `F.interpolate` | `interpolate` | From layers_compat |
+mindone.diffusers.schedulers.scheduling_utils
 
-### Step 3: Model Migration
-
-1. Replace `nn.Module` with `nn.Cell`
-2. Rename `forward()` to `construct()`
-3. Use `layers_compat` for version-aware operations
-4. Update tensor operations (`dim` → `axis`, `.numpy()` → `.asnumpy()`)
-
-### Step 4: Weight Conversion
-
-1. Download HF model weights
-2. Map weight names to MindOne format if needed
-3. Convert using conversion utilities or save as safetensors
-
-### Step 5: Validation
-
-1. Run inference with same inputs on both frameworks
-2. Compare outputs numerically (target: rtol=1e-3, atol=1e-3)
-3. Benchmark performance
-
-## Key Differences from HF Diffusers
-
-1. **Framework**: PyTorch → MindSpore (supports Ascend NPU and GPU)
-2. **Module Base**: `nn.Module` → `nn.Cell`
-3. **Forward Method**: `forward()` → `construct()`
-4. **Attention**: Uses `layers_compat.scaled_dot_product_attention()`
-5. **Flax/ONNX removed**: Only MindSpore backend supported
-6. **Context Parallel**: Added distributed training support via `hooks/context_parallel.py`
-7. **New Models**: Flux2, Bria, Kandinsky5, QwenImage
-
-## Analysis Documentation
-
-See `references/` directory for detailed analysis:
-
-- [00-overview.md](references/00-overview.md) - Executive summary and version compatibility
-- [01-architecture-overview.md](references/01-architecture-overview.md) - High-level structure comparison
-- [02-api-mapping.md](references/02-api-mapping.md) - Detailed PyTorch to MindSpore API mappings
-- [03-folder-structure.md](references/03-folder-structure.md) - Folder-by-folder comparison
-- [04-model-architecture.md](references/04-model-architecture.md) - Specific model implementation differences
-- [05-mindone-specific.md](references/05-mindone-specific.md) - Components unique to mindone
-- [06-pipeline-migration.md](references/06-pipeline-migration.md) - Step-by-step migration workflow
-- [07-migration-analysis.md](references/07-migration-analysis.md) - Current support status and migration priority matrix
-
-## Examples
-
-### Example 1: Simple Model Conversion
-
-```python
-# Before (HF/PyTorch)
-import torch.nn as nn
-
-import torch.nn.functional as F
-
-class SimpleBlock(nn.Module):
-    def forward(self, x):
-        x = F.conv_transpose2d(x, self.weight, stride=2)
-        return x
-
-# After (MindOne)
-import mindspore as ms
-from mindspore import nn
-from diffusers.models.layers_compat import conv_transpose2d
-
-class SimpleBlock(nn.Cell):
-    def construct(self, x):
-        x = conv_transpose2d(x, self.weight, stride=2)
-        return x
+mindone.diffusers.utils.outputs
+  - TextEncoderOutput
+  - BaseModelOutput
 ```
 
-### Example 2: Attention Layer
+**Check if HF utilities need migration:**
+- `diffusers.utils.torch_utils.randn_tensor` → `mindone.diffusers.utils.mindspore_utils.randn_tensor`
+- `diffusers.utils.import_utils` imports
+- Pillow `PIL_INTERPOLATION` constants
+
+**List HF files to migrate (by category):**
+- Models: `models/unet_2d_condition.py`, `models/vae.py`, `models/transformer_2d.py`
+- Pipelines: `pipelines/stable_diffusion/*.py`, `pipelines/flux/*.py`
+- Schedulers: `schedulers/*.py`
+- Configs: `configs/*.json`, `configuration_*.py`
+- Tests: `tests/models/*.py`, `tests/pipelines/*.py`
+
+## Step 2: Run auto_convert.py (Automated Conversion)
+
+**USE THIS FIRST** - The `auto_convert.py` tool handles most conversions automatically.
+
+```bash
+# Convert folder
+python auto_convert.py --src_root /path/to/hf/diffusers --dst_root /path/to/mindone/diffusers
+
+# Convert single file in place
+python auto_convert.py --src_file /path/to/file.py --inplace
+```
+
+### Auto-converted by the tool:
+| Category | Examples |
+|----------|----------|
+| Imports | `torch` → `mindspore.mint`, `torch.nn` → `mindspore.nn` |
+| Classes | `nn.Module` → `nn.Cell`, `forward()` → `construct()` |
+| Tensor operations | 200+ functions (`torch.cat` → `mint.cat`, etc.) |
+| Diffusers imports | `diffusers.utils.randn_tensor` → `mindone.diffusers.utils.mindspore_utils.randn_tensor` |
+| Cleanup | XLA code blocks, `.to("cuda")` calls |
+
+### What needs manual fixes (logged by converter):
+- Unmapped interfaces listed in output
+- Conditional device checks: `if torch.cuda.is_available()`
+- Dynamic module loading with `importlib`
+- Custom attention → use `layers_compat.scaled_dot_product_attention()`
+- Parameter keyword differences: `dim=` → `axis=`
+
+## Step 3: Fix Unmapped Interfaces
+
+Review the converter output log and fix reported issues manually.
+
+**Common manual fixes:**
+```python
+# Tensor method
+tensor.numpy() → tensor.asnumpy()
+
+# Device context (set once, not per tensor)
+ms.set_context(device_target="Ascend")  # or "GPU"
+```
+
+## Step 4: Validate
 
 ```python
-# Before (HF/PyTorch)
-import torch.nn.functional as F
+import numpy as np
 
-def attention(q, k, v, mask=None):
-    return F.scaled_dot_product_attention(q, k, v, attn_mask=mask, is_causal=True)
-
-# After (MindOne)
-from diffusers.models.layers_compat import scaled_dot_product_attention
-
-def attention(q, k, v, mask=None):
-    return scaled_dot_product_attention(q, k, v, attn_mask=mask, is_causal=True, backend="flash")
+# Compare outputs between HF and MindOne
+hf_np = hf_output.numpy() if hasattr(hf_output, 'numpy') else hf_output
+ms_np = ms_output.asnumpy()
+assert np.allclose(hf_np, ms_np, rtol=1e-3, atol=1e-3)
 ```
+
+## Key API Mappings
+
+| PyTorch | MindSpore |
+|---------|-----------|
+| `import torch` | `import mindspore as ms` |
+| `torch.nn.Module` | `ms.nn.Cell` |
+| `forward()` | `construct()` |
+| `torch.cat()` | `ms.mint.cat()` |
+| `torch.nn.functional.scaled_dot_product_attention` | `mindone.diffusers.models.layers_compat.scaled_dot_product_attention` |
+
+## Reference Documents
+
+| File | Purpose |
+|------|---------|
+| [01-overview.md](references/01-overview.md) | Framework & architecture overview |
+| [02-api-mapping.md](references/02-api-mapping.md) | API mappings |
+| [03-migration-guide.md](references/03-migration-guide.md) | Migration workflow |
+| [04-support-status.md](references/04-support-status.md) | Support status & priorities |
+| [env.md](references/env.md) | Environment setup |
+| [guardrails.md](references/guardrails.md) | Migration guidelines |
 
 ## Troubleshooting
 
-**Problem**: `AttributeError: module 'torch' has no attribute '...'`
-**Solution**: Replace torch operations with MindSpore equivalents (see API mapping)
-
-**Problem**: Shape mismatch after migration
-**Solution**: Check `dim` vs `axis` parameter names in reduction operations
-
-**Problem**: Accuracy degradation
-**Solution**: Verify attention mask handling - MindSpore uses inverted boolean masks
+| Issue | Solution |
+|-------|----------|
+| `torch not defined` | `auto_convert.py` should handle - check unmapped log |
+| Shape mismatch | Check `dim` vs `axis` parameter names |
+| Accuracy loss | Verify attention mask handling (boolean mask inversion) |
 
 ## References
 
-- [mindone.diffusers documentation](https://github.com/mindspore-lab/mindone/tree/master/mindone/diffusers)
-- [HF diffusers documentation](https://huggingface.co/docs/diffusers)
-- [layers_compat.py source](https://github.com/mindspore-lab/mindone/blob/master/mindone/diffusers/models/layers_compat.py)
+- [mindone.diffusers docs](https://github.com/mindspore-lab/mindone/tree/master/mindone/diffusers)
+- [HF diffusers docs](https://huggingface.co/docs/diffusers)
+- [layers_compat.py](https://github.com/mindspore-lab/mindone/blob/master/mindone/diffusers/models/layers_compat.py)
