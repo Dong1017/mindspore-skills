@@ -145,6 +145,22 @@ See [Codex AGENTS guide](https://developers.openai.com/codex/guides/agents-md) f
 > Help me implement the linspace operator for MindSpore CPU
 ```
 
+### Run minimal public example
+
+```bash
+bash examples/cpu/plugin_add/run.sh
+```
+
+See expected result contract in `examples/cpu/plugin_add/expected.md`.
+
+## Contract and Tests
+
+- Contract docs:
+  - `docs/concepts/skills-contract.md`
+  - `docs/concepts/artifacts-and-reporting.md`
+- Cross-skill contract tests: `tests/contract/`
+- Skill-specific tests: `skills/<skill>/tests/`
+
 ## Repository Structure
 
 ```
