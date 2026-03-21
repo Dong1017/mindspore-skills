@@ -535,6 +535,71 @@ Files changed:
        - `task_type`-specific artifact classification
        - selected-model and download/auth reporting requirements
 
+### 2026-03-21 - Minimal system checks and final env_summary only
+
+Trigger:
+- The baseline system command list still included `npu-smi info -t board`, but
+  that extra board query was not required for the setup decision.
+- The runtime contract was still asking for intermediate log artifacts even
+  though environment setup should only surface the final installation state in
+  the summary.
+
+Files changed:
+
+1. `skills/setup-agent/SKILL.md`
+   - Description: Main execution prompt used by the model
+   - Change:
+     - Removed `npu-smi info -t board` from the baseline system checks
+     - Added an explicit rule that environment checking should not maintain
+       step-by-step run logs
+     - Replaced the old final-summary wording with final `env_summary`
+
+2. `skills/setup-agent/references/execution-contract.md`
+   - Description: Runtime UX and reporting contract
+   - Change:
+     - Replaced `logs/run.log` and `logs/verify.log` with `env_summary.md`
+     - Clarified that successful installs or repairs should be reflected only
+       in the final `env_summary`
+     - Renamed the final console summary contract to final `env_summary`
+
+3. `skills/setup-agent/tests/test_references.py`
+   - Description: Behavior-contract tests for the skill prompt and references
+   - Change:
+     - Added assertions that `npu-smi info -t board` is no longer used
+     - Added assertions that intermediate run logs are no longer required
+     - Updated summary assertions from final summary to final `env_summary`
+
+### 2026-03-21 - Fixed boxed mailbox summary format
+
+Trigger:
+- The final summary still had too much formatting freedom, which made it easy
+  for the model to drift in layout and field naming.
+- The desired output is a short, aligned, boxed mailbox card with a single
+  example the model can copy.
+
+Files changed:
+
+1. `skills/setup-agent/SKILL.md`
+   - Description: Main execution prompt used by the model
+   - Change:
+     - Changed the final-output instruction to require the fixed mailbox
+       example from the execution contract
+
+2. `skills/setup-agent/references/execution-contract.md`
+   - Description: Runtime UX and reporting contract
+   - Change:
+     - Replaced the free-form final summary contract with a fixed boxed mailbox
+       summary contract
+     - Defined exact field order, aligned labels, title shape, and one-line
+       field rules
+     - Added a canonical aligned example for the model to follow
+
+3. `skills/setup-agent/tests/test_references.py`
+   - Description: Behavior-contract tests for the skill prompt and references
+   - Change:
+     - Replaced the old summary-shape assertions with checks for the new boxed
+       mailbox format, fixed field order, and aligned labels
+
 ## Validation Performed
 
 The rework was validated with:

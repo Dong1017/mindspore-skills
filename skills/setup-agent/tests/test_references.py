@@ -65,6 +65,7 @@ def test_skill_requires_uv_before_python_installs():
     assert "All Python package checks and installs happen only after `uv` is confirmed" in content
     assert "Never install Python packages into the system interpreter." in content
     assert "`uv` is healthy only when both `command -v uv` and `uv --version` succeed." in content
+    assert "Do not maintain step-by-step run logs during environment checking." in content
 
 
 def test_skill_uses_current_path_as_default_workdir():
@@ -231,28 +232,59 @@ def test_skill_requires_streaming_console_output():
     assert "- hugging face download" in content
     assert "- training scripts" in content
     assert "- checkpoint files" in content
+    assert "- final mailbox summary" in content
     assert "setup-agent : training scripts passed: ./train.py, ./scripts/finetune.py" in content
     assert "setup-agent : checkpoint files passed: ./weights/model.safetensors" in content
 
 
-def test_skill_requires_mailbox_style_final_summary():
+def test_skill_requires_fixed_boxed_mailbox_summary():
     content = read_text(REFERENCES_DIR / "execution-contract.md")
-    assert "print a mailbox-style final summary to the console even" in content
-    assert "The final summary must include:" in content
-    assert "- current work dir" in content
-    assert "- which components are already installed" in content
-    assert "- selected model path when present" in content
-    assert "- whether the selected model was reused locally or downloaded" in content
-    assert "- matched training script paths when present" in content
-    assert "- matched checkpoint paths when present" in content
-    assert "- the failure reason if the run failed" in content
-    assert "setup-agent : final summary" in content
-    assert "- /path/to/current/workdir" in content
-    assert "selected_model:" in content
-    assert "model_source:" in content
-    assert "training_scripts:" in content
-    assert "checkpoint_files:" in content
-    assert "download missing scripts or checkpoints from Hugging Face into the current work dir" in content
+    assert "print a final boxed mailbox summary to the console even" in content
+    assert "use an ASCII box" in content
+    assert "keep labels aligned" in content
+    assert "use the title `setup-agent : Success` or `setup-agent : Fail`" in content
+    assert "The final mailbox summary must include these fields in this exact order:" in content
+    assert "- `workdir`" in content
+    assert "- `device`" in content
+    assert "- `uv`" in content
+    assert "- `framework`" in content
+    assert "- `model_deps`" in content
+    assert "- `model`" in content
+    assert "- `script`" in content
+    assert "- `ckpt`" in content
+    assert "- `fixed`" in content
+    assert "- `failed`" in content
+    assert "- `suggestion`" in content
+    assert "| setup-agent : Success" in content
+    assert "| workdir    :" in content
+    assert "| device     :" in content
+    assert "| framework  :" in content
+    assert "| model_deps :" in content
+    assert "| suggestion :" in content
+
+
+def test_execution_contract_uses_env_summary_instead_of_run_logs():
+    content = read_text(REFERENCES_DIR / "execution-contract.md")
+    assert "`env_summary.md`" in content
+    assert "`logs/run.log`" not in content
+    assert "`logs/verify.log`" not in content
+    assert "Do not require intermediate `run.log` or `verify.log` files" in content
+    assert "the final mailbox summary and `env_summary.md`" in content
+
+
+def test_skill_uses_minimal_system_baseline_commands():
+    content = read_text(SKILL_MD)
+    assert "uname -a" in content
+    assert "cat /etc/os-release 2>/dev/null" in content
+    assert "ls /dev/davinci* 2>/dev/null" in content
+    assert "npu-smi info 2>/dev/null" in content
+    assert "npu-smi info -t board 2>/dev/null" not in content
+
+
+def test_skill_points_final_output_to_fixed_mailbox_example():
+    content = read_text(SKILL_MD)
+    assert "a final boxed mailbox summary using the fixed example format from" in content
+    assert "`references/execution-contract.md`" in content
 
 
 def test_manifest_matches_ascend_only_scope_and_permissions():

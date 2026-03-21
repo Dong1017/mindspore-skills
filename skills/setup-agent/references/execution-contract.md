@@ -47,7 +47,7 @@ Major steps that must stream:
 - runtime dependencies
 - training scripts
 - checkpoint files
-- final summary
+- final mailbox summary
 
 When training scripts or checkpoint files are found, print the resolved file
 paths in the stream output.
@@ -63,10 +63,9 @@ setup-agent : checkpoint files passed: ./weights/model.safetensors
 
 Every run must produce standard outputs under `runs/<run_id>/out/`:
 
+- `env_summary.md`
 - `report.json`
 - `report.md`
-- `logs/run.log`
-- `logs/verify.log`
 - `artifacts/README.md`
 - `meta/env.json`
 - `meta/inputs.json`
@@ -99,6 +98,7 @@ Required report content:
   - matched training script paths
   - matched checkpoint paths
 - smoke test results
+- final environment summary that reflects any successful installs or repairs
 - manual system-layer remediation steps if needed
 - the `https://www.hiascend.com/cann/download` link when Ascend driver,
   framework, or toolkit is missing
@@ -115,53 +115,60 @@ Use only these status values:
 
 ## Final Mailbox Summary
 
-At the end of the run, print a mailbox-style final summary to the console even
+At the end of the run, print a final boxed mailbox summary to the console even
 if the run fails early.
 
-The final summary must include:
-- current work dir
-- which components are already installed
-- which components are missing or not yet installed
-- which checks were skipped
-- selected model path when present
-- whether the selected model was reused locally or downloaded
-- matched training script paths when present
-- matched checkpoint paths when present
-- the failure reason if the run failed
-- the next manual action or next automated step
-- the `https://www.hiascend.com/cann/download` link when the Ascend environment
-  is incomplete
-- Hugging Face guidance when the current work dir is missing scripts or
-  checkpoint files
+The final mailbox summary must:
+- use an ASCII box
+- keep labels aligned
+- keep the field order fixed
+- use the title `setup-agent : Success` or `setup-agent : Fail`
+- keep every field on one line
+- use `none` for missing values
 
-Preferred summary shape:
+The final mailbox summary must include these fields in this exact order:
+- `workdir`
+- `device`
+- `uv`
+- `framework`
+- `model_deps`
+- `model`
+- `script`
+- `ckpt`
+- `fixed`
+- `failed`
+- `suggestion`
+
+Do not require intermediate `run.log` or `verify.log` files during environment
+checking. If a component is installed or repaired mid-run, reflect that only in
+the final mailbox summary and `env_summary.md`.
+
+Formatting rules:
+- left label width is fixed at 10 characters before `:`
+- values should be shortened instead of wrapping
+- do not print `PASS`
+- for healthy components, show version, source, or path directly
+- `fixed` is one sentence summarizing what the agent repaired
+- `failed` is one sentence summarizing the final failure reason, or `none`
+- `suggestion` is one sentence telling the user how to repair what the agent
+  could not fix, or `none`
+
+Preferred example:
 
 ```text
-setup-agent : final summary
-workdir:
-- /path/to/current/workdir
-installed:
-- uv 0.10.9
-- python 3.10.12
-selected_model:
-- ./models/qwen-7b
-model_source:
-- local
-training_scripts:
-- ./train.py
-checkpoint_files:
-- ./weights/model.safetensors
-missing:
-- Ascend driver
-- CANN toolkit
-- training script
-- checkpoint file
-skipped:
-- MindSpore
-- torch_npu
-failure:
-- local machine is not an Ascend runtime environment
-next:
-- install driver and CANN on a Linux Ascend host, then rerun setup-agent
-- download missing scripts or checkpoints from Hugging Face into the current work dir
++----------------------------------------------------------------------------------+
+| setup-agent : Success                                                            |
++----------------------------------------------------------------------------------+
+| workdir    : /path/to/current/workdir                                            |
+| device     : driver=24.1.rc2 | CANN=8.0.RC3                                      |
+| uv         : 0.6.14 | env=./.venv | py=3.10.14                                   |
+| framework  : mindspore=2.4.1 | torch=2.3.1 | torch_npu=2.3.1                     |
+| model_deps : transformers=4.44.2 | tokenizers=0.19.1                             |
+| model      : local | ./models/qwen2-7b                                           |
+| script     : ./train.py                                                          |
+| ckpt       : ./models/qwen2-7b/model.safetensors                                 |
+| fixed      : installed uv and updated PATH                                       |
+| failed     : none                                                                |
+| suggestion : none                                                                |
++----------------------------------------------------------------------------------+
 ```

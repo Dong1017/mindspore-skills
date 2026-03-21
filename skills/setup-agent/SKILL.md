@@ -34,6 +34,9 @@ Load these references when needed:
 - If both framework paths are unhealthy, report both independently.
 - If a step fails, stop at that gate unless this file explicitly says to
   continue.
+- Do not maintain step-by-step run logs during environment checking.
+- Reflect newly installed or repaired components only in the final
+  `env_summary`.
 
 ## Execution Order
 
@@ -46,7 +49,7 @@ Run the workflow in this exact order:
 5. Framework checks inside `uv`
 6. Runtime dependency checks
 7. Model-first workspace checks
-8. Final summary and standard report
+8. Final `env_summary` and standard report
 
 Do not skip ahead.
 
@@ -57,9 +60,8 @@ Always collect real evidence first:
 ```bash
 uname -a
 cat /etc/os-release 2>/dev/null
-npu-smi info 2>/dev/null
-npu-smi info -t board 2>/dev/null
 ls /dev/davinci* 2>/dev/null
+npu-smi info 2>/dev/null
 cat /usr/local/Ascend/driver/version.info 2>/dev/null
 cat /usr/local/Ascend/ascend-toolkit/latest/version.cfg 2>/dev/null
 ls /usr/local/Ascend 2>/dev/null
@@ -334,7 +336,8 @@ If the selected workspace is missing training scripts or checkpoint files:
 Always end with:
 - chronological streamed status lines that follow
   `references/execution-contract.md`
-- a mailbox-style final summary
+- a final boxed mailbox summary using the fixed example format from
+  `references/execution-contract.md`
 - standard report artifacts under `runs/<run_id>/out/`
 
 ## Out of Scope
