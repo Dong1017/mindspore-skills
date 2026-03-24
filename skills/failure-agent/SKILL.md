@@ -165,7 +165,7 @@ The final report must include:
 
 Suggested next actions may include:
 
-- rerun env-agent
+- rerun readiness-agent
 - inspect config or assets
 - collect a smaller repro
 - hand off to fix flow
@@ -196,6 +196,6 @@ Use these helper scripts when useful:
 - Keep the first version pragmatic. A good ranked diagnosis with evidence is
   more useful than a long but fragile taxonomy.
 - If the failure clearly points to a pre-run contract mismatch, say so and
-  recommend `env-agent` instead of recreating a full readiness check here.
+  recommend `readiness-agent` instead of recreating a full readiness check here.
 - If the failure clearly becomes an operator implementation task, report that
   handoff explicitly instead of pretending diagnosis is the final step.

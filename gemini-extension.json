@@ -9,59 +9,19 @@
                        "path":  "skills/api-helper/SKILL.md"
                    },
                    {
-                       "name":  "cpu-plugin-builder",
-                       "description":  "Build CPU operators via ATen/libtorch adaptation",
-                       "path":  "skills/cpu-plugin-builder/SKILL.md"
-                   },
-                   {
-                       "name":  "cpu-native-builder",
-                       "description":  "Build native CPU kernels with Eigen/SLEEF",
-                       "path":  "skills/cpu-native-builder/SKILL.md"
-                   },
-                   {
-                       "name":  "gpu-builder",
-                       "description":  "Build GPU operators with CUDA",
-                       "path":  "skills/gpu-builder/SKILL.md"
-                   },
-                   {
-                       "name":  "npu-builder",
-                       "description":  "Build NPU operators for Huawei Ascend",
-                       "path":  "skills/npu-builder/SKILL.md"
-                   },
-                   {
-                       "name":  "mindspore-aclnn-operator-devflow",
-                       "description":  "End-to-end ACLNN operator adaptation workflow for MindSpore Ascend",
-                       "path":  "skills/mindspore-aclnn-operator-devflow/SKILL.md"
-                   },
-                   {
-                       "name":  "hf-diffusers-migrate",
-                       "description":  "Migrate HF diffusers models to mindone.diffusers",
-                       "path":  "skills/hf-diffusers-migrate/SKILL.md"
-                   },
-                   {
-                       "name":  "hf-transformers-migrate",
-                       "description":  "Migrate Hugging Face transformers models to mindone.transformers",
-                       "path":  "skills/hf-transformers-migrate/SKILL.md"
-                   },
-                   {
-                       "name":  "hf-transformers-migrate-test",
-                       "description":  "Generate minimal MindOne transformer tests for migrated models",
-                       "path":  "skills/hf-transformers-migrate-test/SKILL.md"
-                   },
-                   {
-                       "name":  "model-migrate",
+                       "name":  "model-agent",
                        "description":  "Top-level model migration entry that analyzes the source repo, selects the correct migration route, and verifies the result",
-                       "path":  "skills/model-migrate/SKILL.md"
+                       "path":  "skills/model-agent/SKILL.md"
                    },
                    {
-                       "name":  "op-agent",
+                       "name":  "operator-agent",
                        "description":  "Build torch or mindspore operators through custom-access or native-framework integration",
-                       "path":  "skills/op-agent/SKILL.md"
+                       "path":  "skills/operator-agent/SKILL.md"
                    },
                    {
-                       "name":  "env-agent",
+                       "name":  "readiness-agent",
                        "description":  "Analyze a local single-machine training workspace and validate pre-run readiness before training",
-                       "path":  "skills/env-agent/SKILL.md"
+                       "path":  "skills/readiness-agent/SKILL.md"
                    },
                    {
                        "name":  "accuracy-agent",

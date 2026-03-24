@@ -34,5 +34,5 @@ Test locally before committing:
 # Claude Code
 
 # Verify activation
-/cpu-plugin-builder "describe the workflow"
+/operator-agent "describe the workflow"
 ```

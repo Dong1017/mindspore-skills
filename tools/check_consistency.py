@@ -15,7 +15,6 @@ GEMINI = ROOT / "gemini-extension.json"
 # Commands that are routers only and do not require a skill.
 ROUTER_COMMANDS = {
     "migrate",
-    "hf-migrate",
 }
 
 

@@ -24,11 +24,10 @@ skills**, not fully automated executable workflows.
 
 Add six new high-level skills:
 
-- `setup-agent`
 - `failure-agent`
 - `accuracy-agent`
 - `performance-agent`
-- `op-agent`
+- `operator-agent`
 - `algorithm-agent`
 
 These are the high-level skills that map most directly to the current demo
@@ -105,19 +104,14 @@ Decision sequence:
 
 ### 2. Reuse existing specialized skills
 
-`op-agent` should compose with the existing implementation-oriented skills
-rather than replacing them.
+`operator-agent` now owns the top-level operator workflow. Legacy standalone builder
+skills have been removed from the main surface area.
 
-Examples:
+The follow-up work should focus on:
 
-- `cpu-plugin-builder`
-- `cpu-native-builder`
-- `gpu-builder`
-- `npu-builder`
-- `mindspore-aclnn-operator-devflow`
-
-The new agent-style skills should sit above these as diagnosis / routing /
-strategy layers.
+- capability metadata for concrete builder implementations
+- selector logic based on method, backend, workspace, and delivery goal
+- route-specific references and scripts under the new `operator-agent` structure
 
 ### 3. Keep Factory vocabulary aligned
 
@@ -151,30 +145,7 @@ skills/<skill-name>/
 
 Optional `reference/` content may be added where useful.
 
-### B1.1 setup-agent
-
-**Purpose**
-
-Validate and prepare execution environment for training or remote execution.
-
-**Recommended use**
-
-- environment readiness
-- SSH preparation
-- dependency checks
-- device availability checks
-
-**SKILL.md guidance**
-
-The skill should instruct the agent to:
-
-1. identify whether the target is local or remote
-2. collect environment facts
-3. check framework/device/dependency readiness
-4. summarize pass/fail state
-5. suggest fixes for missing prerequisites
-
-### B1.2 failure-agent
+### B1.1 failure-agent
 
 **Purpose**
 
@@ -197,7 +168,7 @@ The skill should instruct the agent to:
 4. if Factory query tooling is available, consult `operator` cards when no known failure matches
 5. propose root cause and fix options
 
-### B1.3 accuracy-agent
+### B1.2 accuracy-agent
 
 **Purpose**
 
@@ -220,7 +191,7 @@ The skill should instruct the agent to:
 5. inspect likely dtype / operator / preprocessing causes
 6. propose fixes and validation steps
 
-### B1.4 performance-agent
+### B1.3 performance-agent
 
 **Purpose**
 
@@ -243,7 +214,7 @@ The skill should instruct the agent to:
 4. if Factory query tooling is available, inspect `trick` cards for applicable optimization techniques
 5. recommend optimizations and expected gains
 
-### B1.5 op-agent
+### B1.5 operator-agent
 
 **Purpose**
 
@@ -341,11 +312,11 @@ Recommended section:
 
 | Skill | Path | Description |
 |-------|------|-------------|
-| setup-agent | skills/setup-agent/ | validate environment readiness |
+| readiness-agent | skills/readiness-agent/ | validate single-machine training workspace readiness |
 | failure-agent | skills/failure-agent/ | diagnose crashes and runtime failures |
 | accuracy-agent | skills/accuracy-agent/ | diagnose accuracy drift and wrong results |
 | performance-agent | skills/performance-agent/ | profile and optimize performance |
-| op-agent | skills/op-agent/ | analyze missing operators and route implementation |
+| operator-agent | skills/operator-agent/ | analyze missing operators and route implementation |
 | algorithm-agent | skills/algorithm-agent/ | recommend and apply algorithm techniques |
 ```
 
@@ -366,13 +337,13 @@ These command docs must stay aligned with Workstream A, Phase A4:
 
 Suggested commands:
 
-- `commands/setup.md`
+- `commands/readiness-agent.md`
 - `commands/diagnose.md`
 - `commands/optimize.md`
 
 Recommended routing:
 
-- `/setup` -> `setup-agent`
+- `/train check` or `/readiness-agent` -> `readiness-agent`
 - `/diagnose` -> router command, not direct multi-skill injection
 - `/optimize` -> `performance-agent` or `algorithm-agent`
 
@@ -406,8 +377,8 @@ contract-compliant.
 
 ## Recommended Build Order
 
-1. Add `setup-agent`, `failure-agent`, `accuracy-agent`, `performance-agent`,
-   `op-agent`, and `algorithm-agent` as manual skills.
+1. Add `readiness-agent`, `failure-agent`, `accuracy-agent`, `performance-agent`,
+   `operator-agent`, and `algorithm-agent` as manual skills.
 2. Add matching `skill.yaml` files with honest dependency declarations.
 3. Update `AGENTS.md`.
 4. Add command docs.

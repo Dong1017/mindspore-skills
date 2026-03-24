@@ -178,4 +178,4 @@ Use these helper scripts when useful:
 - If the workload actually crashes or stops execution, stop and route to
   `failure-agent`.
 - If the evidence shows a pre-run contract mismatch rather than an accuracy
-  problem, recommend `env-agent`.
+  problem, recommend `readiness-agent`.

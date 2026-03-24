@@ -18,20 +18,11 @@ Register the marketplace and install:
 Then use slash command:
 
 ```
-/mscode:cpu-plugin-builder
-/mscode:cpu-native-builder
-/mscode:gpu-builder
-/mscode:hf-diffusers-migrate
-/mscode:hf-migrate
-/mscode:hf-transformers-migrate
-/mscode:hf-transformers-migrate-test
 /mscode:migrate
-/mscode:model-migrate
-/mscode:npu-builder
-/mscode:mindspore-aclnn-operator-devflow
+/mscode:model-agent
 /mscode:api-helper
-/mscode:op-agent
-/mscode:env-agent
+/mscode:operator-agent
+/mscode:readiness-agent
 /mscode:accuracy-agent
 /mscode:performance-agent
 ```
@@ -55,7 +46,7 @@ git clone https://github.com/vigo999/mindspore-skills.git .opencode
 Then in OpenCode:
 
 ```
-/cpu-plugin-builder
+/operator-agent
 ```
 
 See [OpenCode Skills docs](https://opencode.ai/docs/skills) for more details.
@@ -100,28 +91,20 @@ See [Codex AGENTS guide](https://developers.openai.com/codex/guides/agents-md) f
 | Skill | Description |
 |-------|-------------|
 | `api-helper` | Find API call chains and operator wiring in MindSpore codebase |
-| `cpu-plugin-builder` | Build CPU operators via ATen/libtorch adaptation |
-| `cpu-native-builder` | Build native CPU kernels with Eigen/SLEEF |
-| `gpu-builder` | Build GPU operators with CUDA |
-| `npu-builder` | Build NPU operators for Huawei Ascend |
-| `mindspore-aclnn-operator-devflow` | End-to-end ACLNN operator adaptation workflow for MindSpore Ascend |
-| `op-agent` | Build `torch` or `mindspore` operators through custom-access or native-framework integration |
+| `operator-agent` | Build `torch` or `mindspore` operators through custom-access or native-framework integration |
 
 ### Model Migration
 
 | Skill | Description |
 |-------|-------------|
-| `hf-diffusers-migrate` | Migrate HF diffusers models to mindone.diffusers |
-| `hf-transformers-migrate` | Migrate Hugging Face transformers models to mindone.transformers |
-| `hf-transformers-migrate-test` | Generate minimal MindOne transformer tests for migrated models |
-| `model-migrate` | Top-level model migration entry that analyzes the source repo, selects the correct migration route, and verifies the result |
+| `model-agent` | Top-level model migration entry that analyzes the source repo, selects the correct migration route, and verifies the result |
 
 ### Diagnosis and Optimization
 
 | Skill | Description |
 |-------|-------------|
 | `accuracy-agent` | Diagnose accuracy regressions, drift, wrong results, and cross-platform mismatch after successful execution |
-| `env-agent` | Analyze a local single-machine training workspace and validate pre-run readiness before training |
+| `readiness-agent` | Analyze a local single-machine training workspace and validate pre-run readiness before training |
 | `failure-agent` | Diagnose MindSpore and PTA (torch_npu) training and runtime failures with evidence-backed root-cause validation |
 | `performance-agent` | Diagnose throughput, latency, memory, utilization, dataloader, and communication bottlenecks after the workload already runs |
 
@@ -132,41 +115,32 @@ See [Codex AGENTS guide](https://developers.openai.com/codex/guides/agents-md) f
 | Command | Description |
 |---------|-------------|
 | `/api-helper` | API chain discovery workflow |
-| `/cpu-plugin-builder` | ATen adaptation workflow |
-| `/cpu-native-builder` | Native kernel workflow |
-| `/gpu-builder` | CUDA kernel workflow |
-| `/npu-builder` | Ascend NPU workflow |
-| `/mindspore-aclnn-operator-devflow` | ACLNN deep development workflow |
-| `/op-agent` | Operator implementation workflow with custom-access or native-framework routing |
+| `/operator-agent` | Operator implementation workflow with custom-access or native-framework routing |
 
 ### Model Migration
 
 | Command | Description |
 |---------|-------------|
 | `/migrate` | Migration router (HF/third-party), routing only |
-| `/hf-migrate` | HF library router (diffusers/transformers), routing only |
-| `/hf-diffusers-migrate` | HF diffusers migration workflow |
-| `/hf-transformers-migrate` | HF transformers migration workflow |
-| `/hf-transformers-migrate-test` | HF transformers test generation for migrated models |
-| `/model-migrate` | Top-level model migration workflow with route selection and verification |
+| `/model-agent` | Top-level model migration workflow with route selection and verification |
 
 ### Diagnosis and Optimization
 
 | Command | Description |
 |---------|-------------|
 | `/accuracy-agent` | Accuracy diagnosis workflow after successful execution |
-| `/env-agent` | Single-machine training workspace readiness workflow |
+| `/readiness-agent` | Single-machine training workspace readiness workflow |
 | `/failure-agent` | Dual-stack failure diagnosis workflow with evidence, root-cause validation, and report output |
 | `/performance-agent` | Performance diagnosis workflow with bottleneck validation and report output |
 
 ## Usage Examples
 
-### Build a CPU operator
+### Build an operator
 
 ```
-/cpu-plugin-builder
+/operator-agent
 
-> Help me implement the linspace operator for MindSpore CPU
+> Help me implement the linspace operator and choose the right integration path
 ```
 
 ### Run minimal public example
@@ -193,20 +167,11 @@ mindspore-skills/
 ├── commands/                # Slash commands
 │   ├── api-helper.md        # API chain discovery
 │   ├── migrate.md           # Migration router
-│   ├── hf-migrate.md        # HF library router
 │   └── ...
 ├── skills/                  # Skill definitions
-│   ├── cpu-plugin-builder/  # ATen/libtorch operators
-│   ├── cpu-native-builder/  # Native CPU kernels
-│   ├── gpu-builder/         # CUDA operators
-│   ├── npu-builder/         # Ascend NPU operators
-│   ├── mindspore-aclnn-operator-devflow/ # ACLNN deep development workflow
-│   ├── hf-diffusers-migrate/   # HF diffusers migration
-│   ├── hf-transformers-migrate/ # HF transformers migration
-│   ├── hf-transformers-migrate-test/ # HF transformers test generation after migration
-│   ├── model-migrate/       # Top-level model migration entry
-│   ├── op-agent/            # Framework operator implementation
-│   ├── env-agent/           # Training workspace readiness and preflight
+│   ├── model-agent/         # Top-level model migration entry
+│   ├── operator-agent/      # Framework operator implementation
+│   ├── readiness-agent/     # Training workspace readiness and preflight
 │   ├── accuracy-agent/      # Accuracy diagnosis after successful execution
 │   ├── failure-agent/       # Training and runtime failure diagnosis
 │   └── performance-agent/   # Performance diagnosis after the workload already runs
