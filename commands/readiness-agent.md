@@ -1,5 +1,5 @@
 ---
-description: Certify whether a local single-machine workspace is runnable for the intended training or inference task by discovering the execution target, validating dependency closure, optionally applying safe user-space remediation, revalidating affected checks, and emitting a reusable readiness report
+description: Check whether a local single-machine workspace can train or run inference now, explain what is missing before running, and optionally apply safe user-space fixes for the environment, framework, training script, model, or dataset
 ---
 
 # Readiness Agent

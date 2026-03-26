@@ -1,6 +1,6 @@
 ---
 name: readiness-agent
-description: "Certify whether a local single-machine workspace is runnable for the intended training or inference task by discovering the execution target, validating dependency closure, optionally applying safe user-space remediation, revalidating affected checks, and emitting a reusable readiness report."
+description: "Use when the user wants to know whether a local single-machine workspace can train or run inference now, what is missing before running, or whether safe user-space fixes should prepare the environment, framework, training script, model, or dataset."
 ---
 
 # Readiness Agent

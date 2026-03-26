@@ -1,5 +1,5 @@
 ---
-description: Certify whether a local single-machine workspace can run the intended training or inference task and route into readiness-agent
+description: Check whether a local single-machine workspace can train or run inference now, explain what is missing, and route into readiness-agent for safe user-space fixes when allowed
 ---
 
 # Readiness

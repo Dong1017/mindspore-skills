@@ -1,7 +1,7 @@
 schema_version: "1.1.0"
 name: "readiness-agent"
 display_name: "Readiness Agent"
-description: "Certify whether a local single-machine workspace is runnable for the intended training or inference task by discovering the execution target, validating dependency closure, optionally applying safe user-space remediation, revalidating affected checks, and emitting a reusable readiness report."
+description: "Check whether a local single-machine workspace can train or run inference now, report what is missing before running, and optionally apply safe user-space fixes for the environment, framework, training script, model, or dataset."
 version: "0.2.0"
 
 entry:
