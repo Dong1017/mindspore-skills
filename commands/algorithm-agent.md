@@ -4,6 +4,15 @@ description: Adapt a paper feature, released reference implementation, or user-d
 
 # Algorithm Agent
 
+Direct specialist entry for algorithm feature adaptation.
+
+For most users, prefer:
+
+- `/feature <request>`
+
+Use `/algorithm-agent` only when you already know you want to force the
+algorithm specialist directly.
+
 Load the `algorithm-agent` skill and follow its four-stage workflow:
 
 1. feature analysis

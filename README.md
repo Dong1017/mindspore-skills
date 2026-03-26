@@ -18,6 +18,10 @@ Register the marketplace and install:
 Then use slash command:
 
 ```
+/mscode:diagnose
+/mscode:readiness
+/mscode:feature
+/mscode:fix
 /mscode:migrate
 /mscode:model-agent
 /mscode:api-helper
@@ -117,6 +121,10 @@ See [Codex AGENTS guide](https://developers.openai.com/codex/guides/agents-md) f
 
 | Command | Description |
 |---------|-------------|
+| `/diagnose` | Top-level symptom router for failure, accuracy, and performance diagnosis |
+| `/fix` | Top-level symptom router for diagnose + propose + confirm + apply + verify |
+| `/readiness` | Top-level pre-run readiness workflow for training workspaces |
+| `/feature` | Top-level feature adaptation workflow for adding algorithm changes |
 | `/api-helper` | API chain discovery workflow |
 | `/operator-agent` | Operator routing and implementation workflow with custom-access or native-framework integration |
 
@@ -131,11 +139,11 @@ See [Codex AGENTS guide](https://developers.openai.com/codex/guides/agents-md) f
 
 | Command | Description |
 |---------|-------------|
-| `/accuracy-agent` | Accuracy diagnosis workflow after successful execution |
-| `/algorithm-agent` | Algorithm feature adaptation workflow with patch generation, route-specific planning such as mHC, and readiness handoff |
-| `/readiness-agent` | Single-machine training workspace readiness workflow |
-| `/failure-agent` | Dual-stack failure diagnosis workflow with evidence, root-cause validation, and report output |
-| `/performance-agent` | Performance diagnosis workflow with bottleneck validation and report output |
+| `/accuracy-agent` | Direct specialist entry for accuracy diagnosis workflow after successful execution |
+| `/algorithm-agent` | Direct specialist entry for algorithm feature adaptation workflow with patch generation, route-specific planning such as mHC, and readiness handoff |
+| `/readiness-agent` | Direct specialist entry for single-machine training workspace readiness workflow |
+| `/failure-agent` | Direct specialist entry for failure diagnosis workflow with evidence, root-cause validation, and report output |
+| `/performance-agent` | Direct specialist entry for performance diagnosis workflow with bottleneck validation and report output |
 
 ## Usage Examples
 
@@ -147,6 +155,30 @@ See [Codex AGENTS guide](https://developers.openai.com/codex/guides/agents-md) f
 > Help me implement the linspace operator and choose the right integration path
 ```
 
+### Diagnose a training problem
+
+```
+/diagnose my qwen3 lora run crashes with operator not implemented on ascend
+```
+
+### Diagnose and fix a training problem
+
+```
+/fix throughput is only 340 tok/s on npu, expected 520
+```
+
+### Validate a workspace before training
+
+```
+/readiness check whether this qwen3 lora workspace can train on ascend
+```
+
+### Add a model feature
+
+```
+/feature add MHC into this qwen3 lora codebase
+```
+
 ### Examples
 
 See `examples/README.md` for the current example inventory and status.
@@ -155,7 +187,6 @@ Additional example:
 
 ```
 /algorithm-agent
-
 > Add manifold-constrained hyper-connections (mHC) to this llm model and keep the non-mHC path unchanged
 ```
 
@@ -174,6 +205,10 @@ Additional example:
 ```
 mindspore-skills/
 ├── commands/                # Slash commands
+│   ├── diagnose.md          # Symptom router for diagnose mode
+│   ├── readiness.md         # Pre-run readiness entrypoint
+│   ├── feature.md           # Feature adaptation entrypoint
+│   ├── fix.md               # Symptom router for fix mode
 │   ├── api-helper.md        # API chain discovery
 │   ├── failure-agent.md     # Failure diagnosis
 │   ├── migrate.md           # Migration router

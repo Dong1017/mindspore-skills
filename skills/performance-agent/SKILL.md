@@ -11,6 +11,12 @@ Your job is to understand a performance problem after the workload already
 runs, validate the most likely bottlenecks from real evidence, preserve a
 reusable performance snapshot, and emit an actionable report.
 
+This skill supports two modes when a top-level router invokes it:
+
+- `diagnose` mode: stop after diagnosis, ranked bottlenecks, and report output
+- `fix` mode: diagnose first, then propose, confirm, apply, and verify one
+  concrete optimization
+
 This skill is for jobs that already run but are too slow, memory-heavy, or
 poorly utilized. It is not for crashes, setup problems, or accuracy diagnosis.
 
@@ -41,7 +47,9 @@ Do not use this skill for:
 - Identify one dominant bottleneck before suggesting multiple changes.
 - Optimize one dominant bottleneck at a time.
 - Do not claim an optimization worked until the user verifies it.
-- Do not auto-edit code, configs, or the environment in this skill.
+- In `diagnose` mode, do not edit code, configs, or the environment.
+- In `fix` mode, do not edit anything until you have presented the diagnosis,
+  proposed the optimization, and received explicit user confirmation.
 
 ## Workflow
 
@@ -51,6 +59,12 @@ Run the workflow in this order:
 2. `bottleneck-validator`
 3. `snapshot-builder`
 4. `report-builder`
+
+If running in `fix` mode, continue with:
+
+5. `fix-proposal`
+6. `fix-application`
+7. `fix-verification`
 
 ## Stage 1. Performance Analyzer
 
@@ -153,6 +167,34 @@ Suggested next actions may include:
 - optimize one hotspot first
 - hand off to operator work for a hotspot op
 - rerun with a reduced reproducible workload
+
+## Stage 5. Fix Proposal
+
+Only in `fix` mode.
+
+Propose one concrete optimization based on the ranked bottleneck diagnosis:
+
+- summarize the optimization in one line
+- explain the expected throughput, latency, or memory impact
+- show the minimal file, config, or operator-path changes
+- ask the user for explicit confirmation before applying
+
+## Stage 6. Fix Application
+
+Only in `fix` mode, and only after explicit confirmation.
+
+Apply the minimum necessary optimization change. Prefer a narrow hotspot fix
+over broad unrelated tuning.
+
+## Stage 7. Fix Verification
+
+Only in `fix` mode.
+
+Verify the optimization against the original bottleneck symptom:
+
+- rerun the relevant workload or reduced repro
+- compare before/after metrics
+- record whether the dominant bottleneck improved
 
 ## References
 

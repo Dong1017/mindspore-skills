@@ -4,9 +4,16 @@ description: Analyze a local single-machine training workspace, validate readine
 
 # Readiness Agent
 
-Analyze the current training workspace before execution.
+Direct specialist entry for training workspace readiness before execution.
 
-Load the `readiness-agent` skill and follow its four-stage workflow:
+For most users, prefer:
+
+- `/readiness <workspace or problem>`
+
+Use `/readiness-agent` only when you already know you want to force the
+readiness specialist directly.
+
+Load the `readiness-agent` skill and follow its workflow:
 
 1. workspace analysis
 2. compatibility validation

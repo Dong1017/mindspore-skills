@@ -14,7 +14,11 @@ GEMINI = ROOT / "gemini-extension.json"
 
 # Commands that are routers only and do not require a skill.
 ROUTER_COMMANDS = {
+    "diagnose",
+    "feature",
+    "fix",
     "migrate",
+    "readiness",
 }
 
 

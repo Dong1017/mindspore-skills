@@ -22,6 +22,12 @@ You are an expert MindSpore developer. Use the skills below to help developers w
 ## Active Skills
 
 Load the appropriate SKILL.md when users mention:
+**Task Entry Commands:**
+- **/diagnose**: classify the symptom and route to `failure-agent`, `accuracy-agent`, or `performance-agent` in diagnose mode
+- **/fix**: classify the symptom and route to `failure-agent`, `accuracy-agent`, or `performance-agent` in fix mode
+- **/readiness**: route to `readiness-agent` for pre-run workspace validation
+- **/feature**: route to `algorithm-agent` for feature adaptation into an existing model codebase
+
 **Operator Questions:**
 - **api-helper**: "mint.*","operator", "forward", "api", "backward", "tensor.*", "mindspore.*"
 
@@ -54,6 +60,16 @@ When a user's request matches a skill:
 1. Read the corresponding `skills/<name>/SKILL.md` file
 2. Follow the step-by-step instructions
 3. Use reference materials in `skills/<name>/reference/` if available
+
+When a user is describing a post-run problem directly, prefer the task-first
+entrypoints:
+
+- `/diagnose` for analyze-only
+- `/fix` for diagnose + fix workflow
+
+Route from those commands into the right specialist skill instead of asking the
+user to choose `failure-agent`, `accuracy-agent`, or `performance-agent`
+up front when the symptom already implies the right path.
 
 ## Compatibility
 

@@ -11,8 +11,14 @@ Your job is to understand a training or runtime failure, validate the most
 likely root causes from real evidence, preserve a reusable diagnosis snapshot,
 and emit an actionable report.
 
-This skill is for post-failure diagnosis. It does not repair the environment,
-optimize performance, or implement source-code fixes.
+This skill supports two modes when a top-level router invokes it:
+
+- `diagnose` mode: stop after diagnosis, ranked root causes, and report output
+- `fix` mode: diagnose first, then propose, confirm, apply, and verify one
+  concrete fix
+
+This skill is for post-failure work. It is not for readiness validation, pure
+accuracy diagnosis, or pure performance tuning.
 
 ## Scope
 
@@ -44,7 +50,9 @@ Do not use this skill for:
 - If evidence conflicts or is incomplete, downgrade confidence instead of
   pretending certainty.
 - Do not claim a fix is confirmed until the user verifies it.
-- Do not auto-edit code, configs, or the environment in this skill.
+- In `diagnose` mode, do not edit code, configs, or the environment.
+- In `fix` mode, do not edit anything until you have presented the diagnosis,
+  proposed the fix, and received explicit user confirmation.
 - Do not auto-submit or mutate Factory content.
 
 ## Workflow
@@ -55,6 +63,12 @@ Run the workflow in this order:
 2. `root-cause-validator`
 3. `snapshot-builder`
 4. `report-builder`
+
+If running in `fix` mode, continue with:
+
+5. `fix-proposal`
+6. `fix-application`
+7. `fix-verification`
 
 ## Stage 1. Failure Analyzer
 
@@ -170,6 +184,34 @@ Suggested next actions may include:
 - collect a smaller repro
 - hand off to fix flow
 - hand off to operator work
+
+## Stage 5. Fix Proposal
+
+Only in `fix` mode.
+
+Propose one concrete fix based on the ranked diagnosis:
+
+- summarize the fix in one line
+- show the expected impact
+- show the minimal file, config, or environment changes
+- ask the user for explicit confirmation before applying
+
+## Stage 6. Fix Application
+
+Only in `fix` mode, and only after explicit confirmation.
+
+Apply the minimum necessary change to address the diagnosed failure. Prefer a
+small targeted patch over broad unrelated cleanup.
+
+## Stage 7. Fix Verification
+
+Only in `fix` mode.
+
+Verify the fix against the original failure symptom:
+
+- rerun the relevant entrypoint or reduced repro
+- confirm the original failure point no longer reproduces
+- record before/after evidence in the final report
 
 ## References
 

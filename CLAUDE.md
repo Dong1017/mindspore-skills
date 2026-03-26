@@ -34,5 +34,9 @@ Test locally before committing:
 # Claude Code
 
 # Verify activation
+/diagnose "my qwen3 lora run crashes with operator not implemented"
+/fix "accuracy dropped after switching to ascend"
+/readiness "check whether this qwen3 lora workspace can train"
+/feature "add MHC into this model codebase"
 /operator-agent "describe the workflow"
 ```

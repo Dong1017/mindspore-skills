@@ -11,6 +11,12 @@ Your job is to understand an accuracy problem after successful execution,
 validate the most likely consistency or numerical causes, preserve a reusable
 diagnosis snapshot, and emit an actionable report.
 
+This skill supports two modes when a top-level router invokes it:
+
+- `diagnose` mode: stop after diagnosis, ranked root causes, and report output
+- `fix` mode: diagnose first, then propose, confirm, apply, and verify one
+  concrete fix
+
 This skill is for wrong-result, regression, drift, and mismatch problems after
 the workload already runs. It is not for crashes, setup problems, or pure
 performance work.
@@ -43,7 +49,9 @@ Do not use this skill for:
 - If there is no trusted baseline, say so explicitly and reduce the problem to
   the smallest meaningful comparison.
 - Do not claim a fix is confirmed until the user verifies it.
-- Do not auto-edit code, configs, or the environment in this skill.
+- In `diagnose` mode, do not edit code, configs, or the environment.
+- In `fix` mode, do not edit anything until you have presented the diagnosis,
+  proposed the fix, and received explicit user confirmation.
 
 ## Workflow
 
@@ -53,6 +61,12 @@ Run the workflow in this order:
 2. `consistency-validator`
 3. `snapshot-builder`
 4. `report-builder`
+
+If running in `fix` mode, continue with:
+
+5. `fix-proposal`
+6. `fix-application`
+7. `fix-verification`
 
 ## Stage 1. Accuracy Analyzer
 
@@ -152,6 +166,34 @@ Suggested next actions may include:
 - compare checkpoint lineage
 - narrow to a module-level comparison
 - hand off to failure-agent if this is really a hard failure
+
+## Stage 5. Fix Proposal
+
+Only in `fix` mode.
+
+Propose one concrete fix based on the ranked diagnosis:
+
+- summarize the fix in one line
+- explain the expected impact on the baseline gap
+- show the minimal file, config, or precision changes
+- ask the user for explicit confirmation before applying
+
+## Stage 6. Fix Application
+
+Only in `fix` mode, and only after explicit confirmation.
+
+Apply the minimum necessary change to address the diagnosed accuracy problem.
+Prefer a narrow fix over unrelated cleanup.
+
+## Stage 7. Fix Verification
+
+Only in `fix` mode.
+
+Verify the fix against the original accuracy symptom:
+
+- rerun the aligned eval or comparison path
+- compare before/after metrics or outputs
+- record whether the baseline gap narrowed or closed
 
 ## References
 

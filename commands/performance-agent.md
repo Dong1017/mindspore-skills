@@ -4,10 +4,22 @@ description: Diagnose throughput, latency, memory, utilization, dataloader, and 
 
 # Performance Agent
 
-Diagnose performance bottlenecks in workloads that already run successfully but
-are too slow, memory-heavy, or poorly utilized across MindSpore and torch_npu.
+Direct specialist entry for performance bottlenecks in workloads that already
+run successfully but are too slow, memory-heavy, or poorly utilized across
+MindSpore and torch_npu.
 
-Load the `performance-agent` skill and follow its four-stage workflow.
+For most users, prefer:
+
+- `/diagnose <problem>` to auto-route into `performance-agent` in diagnose mode
+- `/fix <problem>` to auto-route into `performance-agent` in fix mode
+
+Use `/performance-agent` only when you already know the problem is a
+performance case and want to force the specialist directly.
+
+Load the `performance-agent` skill and follow its workflow in either:
+
+- `diagnose` mode for evidence, root cause, and report only
+- `fix` mode for diagnose, fix proposal, confirmation, apply, and verify
 
 ## Typical Inputs
 
