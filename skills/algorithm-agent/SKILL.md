@@ -12,9 +12,7 @@ a user request, plan how it should be integrated into the current model
 codebase, generate the minimal patch, and hand the result to readiness
 validation.
 
-This skill is the top-level algorithm feature entry. The user should not need
-to choose up front whether the case is a generic feature patch or a specialized
-route such as mHC integration or Attention Residuals integration.
+This skill is the top-level algorithm feature entry. The user should not need to choose up front whether the case is a generic feature patch or a specialized route such as mHC integration or Attention Residuals integration.
 
 This skill is for adapting local algorithm changes into an existing training
 codebase. It is not for full model migration, operator development, post-run
