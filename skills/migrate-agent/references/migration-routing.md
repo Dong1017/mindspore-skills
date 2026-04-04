@@ -1,6 +1,6 @@
 # Migration Routing
 
-`model-agent` is the top-level migration entry.
+`migrate-agent` is the top-level migration entry.
 
 Choose one route:
 

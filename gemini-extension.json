@@ -1,7 +1,7 @@
 {
     "name":  "mindspore-skills",
     "description":  "MindSpore operator development and model migration skills",
-    "version":  "1.1.0",
+    "version":  "0.1.0",
     "skills":  [
                    {
                        "name":  "api-helper",
@@ -9,9 +9,9 @@
                        "path":  "skills/api-helper/SKILL.md"
                    },
                    {
-                       "name":  "model-agent",
+                       "name":  "migrate-agent",
                        "description":  "Top-level model migration entry that analyzes the source repo, selects the correct migration route, and verifies the result",
-                       "path":  "skills/model-agent/SKILL.md"
+                       "path":  "skills/migrate-agent/SKILL.md"
                    },
                    {
                        "name":  "operator-agent",

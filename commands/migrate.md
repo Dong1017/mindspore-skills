@@ -8,14 +8,14 @@ Select a migration type:
 
 | Type | Command | Description |
 |------|---------|-------------|
-| **Models and Repos** | `/model-agent` | Migrate Hugging Face models, diffusers pipelines, and generic PyTorch repos to MindSpore |
+| **Models and Repos** | `/migrate-agent` | Migrate Hugging Face models, diffusers pipelines, and generic PyTorch repos to MindSpore |
 
 ## Usage
 
 ```
-/migrate hf       -> routes to /model-agent
-/migrate model    -> routes to /model-agent
-/migrate repo     -> routes to /model-agent
+/migrate hf       -> routes to /migrate-agent
+/migrate model    -> routes to /migrate-agent
+/migrate repo     -> routes to /migrate-agent
 ```
 
 If no type specified, ask user what they want to migrate.

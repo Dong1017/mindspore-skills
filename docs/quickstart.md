@@ -19,7 +19,7 @@ python -m pytest -q \
   skills/accuracy-agent/tests \
   skills/performance-agent/tests \
   skills/operator-agent/tests \
-  skills/model-agent/tests
+  skills/migrate-agent/tests
 ```
 
 ## Common Issues

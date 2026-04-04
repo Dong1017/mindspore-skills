@@ -11,64 +11,71 @@ Compatible with **Claude Code**, **OpenCode**, **Gemini CLI**, and **Codex**.
 Register the marketplace and install:
 
 ```
-/plugin marketplace add vigo999/mindspore-skills
-/plugin install mscode@mindspore-skills
+/plugin marketplace add mindspore-lab/mindspore-skills
+/plugin install ms@mindspore-skills
 ```
 
 Then use slash command:
 
 ```
-/mscode:diagnose
-/mscode:readiness
-/mscode:feature
-/mscode:fix
-/mscode:migrate
-/mscode:model-agent
-/mscode:api-helper
-/mscode:operator-agent
-/mscode:readiness-agent
-/mscode:accuracy-agent
-/mscode:failure-agent
-/mscode:algorithm-agent
-/mscode:performance-agent
+/ms:diagnose
+/ms:fix
+/ms:migrate
 ```
 
 ### OpenCode
 
-Clone to your global config:
+OpenCode loads custom commands from `commands/` and skills from `skills/`.
+
+For a specific project, clone this repository into `.opencode`:
 
 ```bash
-git clone https://github.com/vigo999/mindspore-skills.git ~/.config/opencode/mindspore-skills
-ln -s ~/.config/opencode/mindspore-skills/skills ~/.config/opencode/skills
-ln -s ~/.config/opencode/mindspore-skills/commands ~/.config/opencode/commands
+git clone https://github.com/mindspore-lab/mindspore-skills.git .opencode
 ```
 
-Or for a specific project:
+This gives OpenCode the expected layout:
+
+```text
+.opencode/commands/
+.opencode/skills/
+```
+
+For a global install, copy or symlink the contents into your existing OpenCode
+directories instead of replacing the whole directory:
 
 ```bash
-git clone https://github.com/vigo999/mindspore-skills.git .opencode
+git clone https://github.com/mindspore-lab/mindspore-skills.git ~/.config/opencode/mindspore-skills
+mkdir -p ~/.config/opencode/skills ~/.config/opencode/commands
+ln -s ~/.config/opencode/mindspore-skills/skills/* ~/.config/opencode/skills/
+ln -s ~/.config/opencode/mindspore-skills/commands/* ~/.config/opencode/commands/
 ```
 
 Then in OpenCode:
 
 ```
-/operator-agent
+/diagnose
+/fix
+/migrate
 ```
 
-See [OpenCode Skills docs](https://opencode.ai/docs/skills) for more details.
+Specialist capabilities such as operator work, readiness checks, accuracy
+analysis, and algorithm adaptation remain available as skills and routed
+workflows rather than public slash commands.
+
+See [OpenCode Skills docs](https://opencode.ai/docs/skills) and [OpenCode Commands docs](https://opencode.ai/docs/commands) for more details.
 
 ### Gemini CLI
 
 Install as an extension:
 
 ```bash
-gemini extensions install https://github.com/vigo999/mindspore-skills.git --consent
+gemini extensions install https://github.com/mindspore-lab/mindspore-skills.git --consent
 ```
 
 Or from local clone:
 
 ```bash
-git clone https://github.com/vigo999/mindspore-skills.git
+git clone https://github.com/mindspore-lab/mindspore-skills.git
 gemini extensions install ./mindspore-skills --consent
 ```
 
@@ -76,16 +83,26 @@ See [Gemini CLI extensions docs](https://geminicli.com/docs/extensions/) for mor
 
 ### Codex
 
-Clone to your project root:
+Codex does not install slash commands from this repository. It follows the
+instructions it discovers from `AGENTS.md` files in the active project.
+
+If you are working in this repository, no extra install step is needed. Open
+the repo in Codex and it will read [AGENTS.md](/home/weizheng/work/mindspore-skills/AGENTS.md).
+
+If you want to reuse this guidance in another project, copy or adapt the
+relevant sections into that project's `AGENTS.md`. For shared personal defaults
+across projects, you can also place guidance in `~/.codex/AGENTS.md`.
+
+To verify instruction loading in this repository:
 
 ```bash
-git clone https://github.com/vigo999/mindspore-skills.git .mindspore-skills
+codex --ask-for-approval never "Summarize the current instructions."
 ```
 
-Codex reads `AGENTS.md` automatically. Verify with:
+To verify instruction loading in another project:
 
 ```bash
-codex "Summarize the MindSpore skills available."
+codex --cd /path/to/your/project --ask-for-approval never "Show which instruction files are active."
 ```
 
 See [Codex AGENTS guide](https://developers.openai.com/codex/guides/agents-md) for more details.
@@ -103,7 +120,7 @@ See [Codex AGENTS guide](https://developers.openai.com/codex/guides/agents-md) f
 
 | Skill | Description |
 |-------|-------------|
-| `model-agent` | Top-level model migration entry that analyzes the source repo, selects the correct migration route, and verifies the result |
+| `migrate-agent` | Top-level model migration entry that analyzes the source repo, selects the correct migration route, and verifies the result |
 
 ### Diagnosis and Optimization
 
@@ -117,43 +134,13 @@ See [Codex AGENTS guide](https://developers.openai.com/codex/guides/agents-md) f
 
 ## Available Commands
 
-### Operator Development
-
 | Command | Description |
 |---------|-------------|
 | `/diagnose` | Top-level symptom router for failure, accuracy, and performance diagnosis |
 | `/fix` | Top-level symptom router for diagnose + propose + confirm + apply + verify |
-| `/readiness` | Top-level pre-run readiness workflow for local single-machine training or inference workspaces |
-| `/feature` | Top-level feature adaptation workflow for adding algorithm changes |
-| `/api-helper` | API chain discovery workflow |
-| `/operator-agent` | Operator routing and implementation workflow with custom-access or native-framework integration |
-
-### Model Migration
-
-| Command | Description |
-|---------|-------------|
 | `/migrate` | Migration router (HF/third-party), routing only |
-| `/model-agent` | Top-level model migration workflow with route selection and verification |
-
-### Diagnosis and Optimization
-
-| Command | Description |
-|---------|-------------|
-| `/accuracy-agent` | Direct specialist entry for accuracy diagnosis workflow after successful execution |
-| `/algorithm-agent` | Direct specialist entry for algorithm feature adaptation workflow with patch generation, route-specific planning such as mHC, and readiness handoff |
-| `/readiness-agent` | Direct specialist entry for single-machine training or inference workspace readiness workflow |
-| `/failure-agent` | Direct specialist entry for failure diagnosis workflow with evidence, root-cause validation, and report output |
-| `/performance-agent` | Direct specialist entry for performance diagnosis workflow with bottleneck validation and report output |
 
 ## Usage Examples
-
-### Build an operator
-
-```
-/operator-agent
-
-> Help me implement the linspace operator and choose the right integration path
-```
 
 ### Diagnose a training problem
 
@@ -167,28 +154,19 @@ See [Codex AGENTS guide](https://developers.openai.com/codex/guides/agents-md) f
 /fix throughput is only 340 tok/s on npu, expected 520
 ```
 
-### Validate a workspace before training
+### Route a migration request
 
 ```
-/readiness check whether this qwen3 lora workspace can train on ascend
-```
-
-### Add a model feature
-
-```
-/feature add MHC into this qwen3 lora codebase
+/migrate port this HuggingFace qwen2 repo to MindSpore
 ```
 
 ### Examples
 
 See `examples/README.md` for the current example inventory and status.
 
-Additional example:
-
-```
-/algorithm-agent
-> Add manifold-constrained hyper-connections (mHC) to this llm model and keep the non-mHC path unchanged
-```
+Other capabilities can be triggered by describing the task directly, for
+example operator implementation, readiness validation, or algorithm changes such
+as mHC.
 
 ## Contract and Tests
 
@@ -206,16 +184,12 @@ Additional example:
 mindspore-skills/
 ├── commands/                # Slash commands
 │   ├── diagnose.md          # Symptom router for diagnose mode
-│   ├── readiness.md         # Pre-run readiness entrypoint
-│   ├── feature.md           # Feature adaptation entrypoint
 │   ├── fix.md               # Symptom router for fix mode
-│   ├── api-helper.md        # API chain discovery
-│   ├── failure-agent.md     # Failure diagnosis
 │   ├── migrate.md           # Migration router
 │   └── ...
 ├── skills/                  # Skill definitions
 │   ├── api-helper/          # MindSpore API call-chain discovery
-│   ├── model-agent/         # Top-level model migration entry
+│   ├── migrate-agent/       # Top-level model migration entry
 │   ├── operator-agent/      # Framework operator implementation
 │   ├── readiness-agent/     # Single-machine workspace readiness and preflight
 │   ├── accuracy-agent/      # Accuracy diagnosis after successful execution
@@ -233,7 +207,7 @@ Contributions are welcome. Please submit a pull request.
 
 When adding a new skill:
 1. Add `skills/<skill-name>/SKILL.md` with matching frontmatter and directory name
-2. Add a slash command in `commands/<command-name>.md` if needed
+2. Add a slash command in `commands/<command-name>.md` only if the skill should be part of the small public command surface
 3. Update `AGENTS.md` (skill table + activation triggers)
 4. Update `README.md` (skill list and commands)
 5. Update `gemini-extension.json` with name/path/description

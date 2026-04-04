@@ -1,11 +1,11 @@
 ---
-name: model-agent
+name: migrate-agent
 description: Migrate model implementations into the MindSpore ecosystem by first analyzing the source model or repo, then selecting the correct migration route, building the migration, and verifying the result. Use this as the top-level migration entry instead of asking users to choose `hf-transformers`, `hf-diffusers`, or generic PyTorch migration paths up front.
 ---
 
-# Model Agent
+# Migrate Agent
 
-You are a model migration agent.
+You are a migration agent.
 
 Your job is to analyze the source model or repository, choose the correct
 migration route, execute the migration with the appropriate route-specific

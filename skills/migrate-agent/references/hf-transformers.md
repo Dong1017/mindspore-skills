@@ -6,7 +6,7 @@ This route migrates Hugging Face transformers models into
 `mindone.transformers` with a standard workflow, tool-assisted conversion,
 manual MindSpore adaptation, and registration updates.
 
-Top-level `model-agent` should keep the route boundary explicit here instead of
+Top-level `migrate-agent` should keep the route boundary explicit here instead of
 forcing the user to choose it up front.
 
 ## When to Use
@@ -62,14 +62,14 @@ Otherwise, prefer reusing the Hugging Face implementation directly.
 Run the route-specific single-file in-place conversion before any manual edits:
 
 ```bash
-python skills/model-agent/scripts/hf_transformers_auto_convert.py \
+python skills/migrate-agent/scripts/hf_transformers_auto_convert.py \
   --src_file path/to/file.py --inplace
 ```
 
 Install the tool dependency first when needed:
 
 ```bash
-pip install -r skills/model-agent/scripts/hf_transformers_auto_convert.requirements.txt
+pip install -r skills/migrate-agent/scripts/hf_transformers_auto_convert.requirements.txt
 ```
 
 You must run the auto-convert script before manual edits on migrated modeling

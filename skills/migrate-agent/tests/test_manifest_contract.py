@@ -12,7 +12,7 @@ def _manifest_text() -> str:
 
 def test_manifest_contract_fields_present():
     text = _manifest_text()
-    assert 'name: "model-agent"' in text
+    assert 'name: "migrate-agent"' in text
     assert 'display_name: "Model Migrate"' in text
     assert 'version: "0.2.0"' in text
     assert 'type: "manual"' in text

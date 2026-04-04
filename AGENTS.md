@@ -11,7 +11,7 @@ You are an expert MindSpore developer. Use the skills below to help developers w
 | Skill | Path | Description |
 |-------|------|-------------|
 | api-helper | skills/api-helper/ | find API call chains and operator wiring in MindSpore codebase |
-| model-agent | skills/model-agent/ | top-level model migration entry that analyzes source repos, selects the correct migration route, and verifies the result |
+| migrate-agent | skills/migrate-agent/ | top-level model migration entry that analyzes source repos, selects the correct migration route, and verifies the result |
 | operator-agent | skills/operator-agent/ | build `torch` or `mindspore` operators through custom-access or native-framework integration |
 | readiness-agent | skills/readiness-agent/ | check whether a local single-machine workspace is ready to train or run inference now, identify what is missing before execution, and optionally apply safe user-space readiness fixes |
 | accuracy-agent | skills/accuracy-agent/ | diagnose accuracy regressions, drift, wrong results, and cross-platform mismatch after successful execution |
@@ -25,8 +25,7 @@ Load the appropriate SKILL.md when users mention:
 **Task Entry Commands:**
 - **/diagnose**: classify the symptom and route to `failure-agent`, `accuracy-agent`, or `performance-agent` in diagnose mode
 - **/fix**: classify the symptom and route to `failure-agent`, `accuracy-agent`, or `performance-agent` in fix mode
-- **/readiness**: route to `readiness-agent` for preflight workspace readiness checks, missing-item analysis, and safe user-space readiness fixes
-- **/feature**: route to `algorithm-agent` for feature adaptation into an existing model codebase
+- **/migrate**: route to `migrate-agent` for migration route selection and verification planning
 
 **Operator Questions:**
 - **api-helper**: "mint.*","operator", "forward", "api", "backward", "tensor.*", "mindspore.*"
@@ -34,7 +33,7 @@ Load the appropriate SKILL.md when users mention:
 **Operator Development:**
 - **operator-agent**: "operator", "custom op", "plugin", "new wheel", "native op", "framework source", "implement operator"
 **Model Migration:**
-- **model-agent**: "migrate", "PyTorch repo", "MindSpore migration", "model migrate", "port repo", "transformers migrate", "diffusers migrate"
+- **migrate-agent**: "migrate", "PyTorch repo", "MindSpore migration", "model migrate", "port repo", "transformers migrate", "diffusers migrate"
 
 **Diagnosis and Optimization:**
 - **accuracy-agent**: "accuracy", "drift", "mismatch", "numerical", "regression", "wrong result", "loss mismatch", "cross-platform", "eval regression", "NaN"
@@ -66,19 +65,20 @@ entrypoints:
 
 - `/diagnose` for analyze-only
 - `/fix` for diagnose + fix workflow
+- `/migrate` for migration routing and specialist handoff
 
 Route from those commands into the right specialist skill instead of asking the
-user to choose `failure-agent`, `accuracy-agent`, or `performance-agent`
-up front when the symptom already implies the right path.
+user to choose a specialist skill up front when the top-level intent already
+implies the right path.
 
 ## Compatibility
 
 This repository works with:
 
-- **Claude Code**: `/plugin marketplace add vigo999/mindspore-skills`
-- **OpenCode**: Clone to `~/.config/opencode/` or `.opencode/`
+- **Claude Code**: `/plugin marketplace add mindspore-lab/mindspore-skills`
+- **OpenCode**: place this repo under `.opencode/` for project-local use, or copy/symlink its `skills/*` and `commands/*` entries into `~/.config/opencode/skills/` and `~/.config/opencode/commands/`
 - **Gemini CLI**: `gemini extensions install <repo> --consent`
-- **Codex**: Reads this AGENTS.md automatically
+- **Codex**: reads this `AGENTS.md` automatically when this repository is the active project; reuse in other repositories by copying/adapting the guidance into that project's `AGENTS.md` or `~/.codex/AGENTS.md`
 
 ## Additional Skills
 

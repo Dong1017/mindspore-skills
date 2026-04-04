@@ -1,5 +1,5 @@
 schema_version: "1.1.0"
-name: "model-agent"
+name: "migrate-agent"
 display_name: "Model Migrate"
 description: "Top-level model migration agent that analyzes a source model or repo, selects the correct migration route, executes the migration flow, and verifies the result for MindSpore-oriented targets."
 version: "0.2.0"

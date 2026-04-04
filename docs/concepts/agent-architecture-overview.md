@@ -24,7 +24,7 @@ The current top-level skill surface is:
 - `algorithm-agent`
 - `performance-agent`
 - `operator-agent`
-- `model-agent`
+- `migrate-agent`
 
 There is also one supporting skill:
 
@@ -46,7 +46,7 @@ Recommended entry mapping:
 - "Add mHC to this llm model." -> `algorithm-agent`
 - "The run works, but it is slow." -> `performance-agent`
 - "Implement an operator." -> `operator-agent`
-- "Migrate this model or repo to MindSpore." -> `model-agent`
+- "Migrate this model or repo to MindSpore." -> `migrate-agent`
 
 This keeps product routing stable even when internal builder or route choices
 change later.
@@ -209,7 +209,7 @@ Important boundary:
 - concrete builder or backend implementation details can evolve behind that
   stable top-level workflow
 
-### `model-agent`
+### `migrate-agent`
 
 Purpose:
 - migrate model implementations or repos into the MindSpore ecosystem
@@ -227,7 +227,7 @@ Supported migration routes:
 - `generic-pytorch-repo`
 
 Important boundary:
-- users enter through `model-agent`
+- users enter through `migrate-agent`
 - users do not need to decide route details up front
 
 ## Relationship Between Agents
@@ -240,7 +240,7 @@ These agents are not isolated. They form a layered problem space:
 - `algorithm-agent` adapts new feature ideas into the current codebase
 - `performance-agent` answers why a completed run is too slow
 - `operator-agent` handles operator implementation work
-- `model-agent` handles migration work
+- `migrate-agent` handles migration work
 
 Useful handoff patterns:
 
@@ -251,7 +251,7 @@ Useful handoff patterns:
 - `performance-agent` may use environment or profiler context produced by other
   workflows
 - `operator-agent` stays separate from diagnosis flows
-- `model-agent` stays separate from runtime diagnosis flows
+- `migrate-agent` stays separate from runtime diagnosis flows
 
 ## Why This Architecture
 
@@ -275,22 +275,16 @@ Current top-level `skills/` directories:
 - `algorithm-agent`
 - `api-helper`
 - `failure-agent`
-- `model-agent`
+- `migrate-agent`
 - `operator-agent`
 - `performance-agent`
 - `readiness-agent`
 
 Current top-level `commands/` entries:
 
-- `accuracy-agent`
-- `algorithm-agent`
-- `api-helper`
-- `failure-agent`
+- `diagnose`
+- `fix`
 - `migrate`
-- `model-agent`
-- `operator-agent`
-- `performance-agent`
-- `readiness-agent`
 
 ## Guidance For Future Changes
 

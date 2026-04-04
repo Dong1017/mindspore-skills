@@ -12,7 +12,7 @@ This repository contains agent skills for MindSpore development.
 
 When adding a new skill:
 1. Add `skills/<skill-name>/SKILL.md` with matching frontmatter and directory name
-2. Add a slash command in `commands/<command-name>.md` if needed
+2. Add a slash command in `commands/<command-name>.md` only if the skill belongs on the small public command surface (`diagnose`, `fix`, `migrate`, or a future replacement)
 3. Ensure SKILL.md has valid YAML frontmatter with `name` and `description`
 4. Ensure the skill name in SKILL.md matches the directory name
 5. Update `AGENTS.md` (skill table + activation triggers)
@@ -36,7 +36,5 @@ Test locally before committing:
 # Verify activation
 /diagnose "my qwen3 lora run crashes with operator not implemented"
 /fix "accuracy dropped after switching to ascend"
-/readiness "check whether this qwen3 lora workspace can train"
-/feature "add MHC into this model codebase"
-/operator-agent "describe the workflow"
+/migrate "port this HuggingFace model repo to MindSpore"
 ```
