@@ -2,6 +2,30 @@
 
 [English](README.md) | [简体中文](README.zh-CN.md)
 
+## Tell the agent what went wrong. It fixes the rest.
+
+**failure-agent**
+
+:x: **Problem:** Qwen3 training crashed on Ascend 910B with gradient checkpointing error
+
+:keyboard: **Type:** `/fix "training crashed with gradient checkpointing error"`
+
+:white_check_mark: **Result:** failure-agent reads the logs, locates the root cause, and applies the fix automatically
+
+<img src="docs/assets/failure_agent.gif" width="720" />
+
+**accuracy-agent**
+
+:x: **Problem:** Qwen3 inference output has precision errors after switching to Ascend
+
+:keyboard: **Type:** `/fix "qwen3 infer has accuracy issue, check run_01.log"`
+
+:white_check_mark: **Result:** accuracy-agent compares results, traces the numerical drift, and fixes it automatically
+
+<img src="docs/assets/accuracy_agent.gif" width="720" />
+
+---
+
 MindSpore Skills for **AI infra and model training workflows**.
 
 MindSpore Skills focuses on the high-frequency tasks around model training and migration, including **environment readiness, failure diagnosis, accuracy analysis, performance analysis, model migration, operator work, and algorithm adaptation**.
@@ -12,28 +36,6 @@ MindSpore Skills can be used in two ways:
 
 - as the capability layer behind **MindSpore CLI**
 - as reusable domain skills loaded by other **CLI agents**
-
-## Demo
-
-**failure-agent**
-
-> :x: **Problem:** Qwen3 training crashed on Ascend 910B with gradient checkpointing error
->
-> :keyboard: **Type:** `/fix "training crashed with gradient checkpointing error"`
->
-> :white_check_mark: **Result:** failure-agent reads the logs, locates the root cause, and applies the fix automatically
-
-<img src="docs/assets/failure_agent.gif" width="720" />
-
-**accuracy-agent**
-
-> :x: **Problem:** Qwen3 inference output has precision errors after switching to Ascend
->
-> :keyboard: **Type:** `/fix "qwen3 infer has accuracy issue, check run_01.log"`
->
-> :white_check_mark: **Result:** accuracy-agent compares results, traces the numerical drift, and fixes it automatically
-
-<img src="docs/assets/accuracy_agent.gif" width="720" />
 
 ---
 
