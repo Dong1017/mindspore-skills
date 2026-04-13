@@ -98,6 +98,8 @@ You must identify:
 - `integration_route`
 - `route_evidence`
 - `recommended_next_action`
+- `qualification_basis`
+- `source_status`
 
 Choose exactly one integration route:
 
@@ -129,7 +131,8 @@ or attention / KV-cache conversion for Qwen-like causal LLMs.
 Use `generic-feature` for all other feature adaptations.
 
 Build a structured `FeatureSpec` that includes `integration_route`,
-`route_evidence`, `feature_bucket`, and `recommended_next_action`.
+`route_evidence`, `feature_bucket`, `recommended_next_action`,
+`qualification_basis`, and `source_status`.
 
 ### Intake scoring / triage rubric
 
@@ -143,6 +146,8 @@ Score or tag each candidate on:
 - `bridge_value`
 - `verification_value`
 - `phase1_tractability`
+- `qualification_basis`
+- `source_status`
 - `recommended_next_action`
 
 Operational calibration:
@@ -184,11 +189,15 @@ Build an `IntegrationPlan` that records `route_specific_constraints`,
 The code-map step must:
 
 1. identify the relevant reference repo or released implementation
-2. map the feature to concrete source modules, configs, and entrypoints
-3. summarize the reusable implementation delta
-4. translate that delta into a target-repo patch plan
+2. pin the reference scope and commit or tag for reproducibility
+3. map the feature to concrete source modules, configs, and entrypoints
+4. summarize the reusable implementation delta
+5. translate that delta into a target-repo patch plan
 
-### `generic-feature` route
+The first verification scaffold should be treated as a minimum validation
+recording contract. Each slot should declare expected evidence and must use only
+these status values: `pass`, `fail`, `blocked`, `not_run`, or `partial`.
+Unexecuted slots must never be implied as `pass`.
 
 Use the default planning flow for recipe, module, system, or hybrid feature
 patches that do not need a specialized route pack.

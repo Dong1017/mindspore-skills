@@ -44,3 +44,7 @@ def test_phase1_pipeline_rules_are_present():
     assert "phase 1 should default to one combined helper/scaffold script" in text
     assert "Admission hard blockers" in text
     assert "Use `TransMLA` as the first worked example" in text
+    assert "`qualification_basis`" in text
+    assert "`source_status`" in text
+    assert "must use only" in text
+    assert "`pass`, `fail`, `blocked`, `not_run`, or `partial`" in text

@@ -34,6 +34,8 @@ Record at least:
 - `dependency_complexity`
 - `verification_risk`
 - `migration_blockers`
+- `qualification_basis`
+- `source_status`
 - `recommended_next_action`
 
 ## Scoring / Triage Rubric

@@ -26,10 +26,11 @@ def test_manifest_declares_route_input_and_output_contract():
     assert 'choices: ["generic-feature", "mhc", "attnres", "transmla"]' in text
     assert 'report_schema' in text
     assert 'out_dir_layout' in text
-    assert '"feature_bucket"' in text
-    assert '"recommended_next_action"' in text
-    assert '"code_map_summary"' in text
-    assert '"verification_scaffold"' in text
+    assert '"qualification_basis"' in text
+    assert '"source_status"' in text
+    assert '"reference_scope"' in text
+    assert '"reference_commit_or_tag"' in text
+    assert '"preliminary_handoff_target"' in text
 
 
 def test_skill_declares_route_specific_plan_fields():

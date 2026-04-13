@@ -5,6 +5,21 @@ combined in phase 1 unless reuse clearly justifies splitting.
 
 ## Verification Scaffold
 
+This phase-1 scaffold is a minimum validation recording contract, not a claim
+that full execution is already automated or complete.
+
+Each slot should record:
+- purpose
+- expected evidence
+- allowed status
+
+Allowed status values:
+- `pass`
+- `fail`
+- `blocked`
+- `not_run`
+- `partial`
+
 Minimum repeatable checks:
 
 - `torch` smoke forward
@@ -16,6 +31,12 @@ Minimum repeatable checks:
 - shape/dtype consistency checks
 - feature on/off regression checks
 - standard accuracy-drift classification output
+
+### Slot evidence rule
+
+Each slot must have explicit expected evidence before it can be treated as
+complete. Unrunnable slots must be recorded as `blocked` or `not_run`; they must
+never be implied as `pass`.
 
 ## Handoff Rules
 

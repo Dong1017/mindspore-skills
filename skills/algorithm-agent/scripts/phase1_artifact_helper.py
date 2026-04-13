@@ -26,11 +26,14 @@ INTAKE_FIELDS = [
     "dependency_complexity",
     "verification_risk",
     "migration_blockers",
+    "qualification_basis",
+    "source_status",
     "recommended_next_action",
 ]
 
 CODE_MAP_FIELDS = [
     "reference_repo",
+    "reference_scope",
     "reference_commit_or_tag",
     "target_feature",
     "source_modules",
@@ -54,6 +57,8 @@ VERIFY_FIELDS = [
     "shape_dtype_checks",
     "feature_toggle_regression",
     "accuracy_drift_status",
+    "slot_expected_evidence",
+    "allowed_status_values",
     "handoff_needed",
     "handoff_target",
     "notes",
@@ -74,6 +79,8 @@ def build_intake(args: argparse.Namespace) -> dict:
         "dependency_complexity": args.dependency_complexity,
         "verification_risk": args.verification_risk,
         "migration_blockers": args.migration_blockers,
+        "qualification_basis": args.qualification_basis,
+        "source_status": args.source_status,
         "recommended_next_action": args.recommended_next_action,
     }
 
@@ -81,6 +88,7 @@ def build_intake(args: argparse.Namespace) -> dict:
 def build_code_map(args: argparse.Namespace) -> dict:
     return {
         "reference_repo": args.reference_repo,
+        "reference_scope": args.reference_scope,
         "reference_commit_or_tag": args.reference_commit_or_tag,
         "target_feature": args.target_feature,
         "source_modules": args.source_modules,
@@ -106,6 +114,8 @@ def build_verify(args: argparse.Namespace) -> dict:
         "shape_dtype_checks": args.shape_dtype_checks,
         "feature_toggle_regression": args.feature_toggle_regression,
         "accuracy_drift_status": args.accuracy_drift_status,
+        "slot_expected_evidence": args.slot_expected_evidence,
+        "allowed_status_values": args.allowed_status_values,
         "handoff_needed": args.handoff_needed,
         "handoff_target": args.handoff_target,
         "notes": args.notes,
@@ -144,11 +154,14 @@ def main() -> int:
     intake.add_argument("--dependency-complexity", default="medium")
     intake.add_argument("--verification-risk", default="medium")
     intake.add_argument("--migration-blockers", default="")
+    intake.add_argument("--qualification-basis", default="")
+    intake.add_argument("--source-status", default="provisional")
     intake.add_argument("--recommended-next-action", default="watchlist")
     add_common_output_flags(intake)
 
     code_map = subparsers.add_parser("code-map", help="Generate a code-map artifact")
     code_map.add_argument("--reference-repo", default="")
+    code_map.add_argument("--reference-scope", default="")
     code_map.add_argument("--reference-commit-or-tag", default="")
     code_map.add_argument("--target-feature", default="")
     code_map.add_argument("--source-modules", nargs="*", default=[])
@@ -172,6 +185,8 @@ def main() -> int:
     verify.add_argument("--shape-dtype-checks", default="pending")
     verify.add_argument("--feature-toggle-regression", default="pending")
     verify.add_argument("--accuracy-drift-status", default="unknown")
+    verify.add_argument("--slot-expected-evidence", default="")
+    verify.add_argument("--allowed-status-values", nargs="*", default=["pass", "fail", "blocked", "not_run", "partial"])
     verify.add_argument("--handoff-needed", default="false")
     verify.add_argument("--handoff-target", default="")
     verify.add_argument("--notes", default="")
