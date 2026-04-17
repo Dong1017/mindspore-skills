@@ -15,11 +15,12 @@ minimal patch, and hand the result to readiness validation.
 This skill is the top-level algorithm feature entry. The user should not need to
 choose up front whether the case is a generic feature patch or a specialized
 route such as mHC integration, Attention Residuals integration, or TransMLA
-conversion.
+adaptation.
 
 This skill is for adapting local algorithm changes into an existing training
 codebase. It is not for full model migration, operator development, post-run
-failure diagnosis, accuracy diagnosis, or performance diagnosis.
+failure diagnosis, accuracy diagnosis, performance diagnosis, or environment
+repair.
 
 ## Scope
 
@@ -52,54 +53,7 @@ Run the workflow in this order:
 Do not skip directly to patch generation.
 Do not turn route selection into a fifth workflow stage.
 
-## Phase-1 file growth rule
-
-Phase 1 must actively avoid unnecessary file growth.
-
-- Prefer extending existing files before creating new ones.
-- Keep tightly coupled phase-1 guidance together.
-- Default to one combined helper/scaffold script unless execution proves that
-  splitting is necessary.
-- Do not create per-case artifact trees by default.
-- Do not mirror the full mHC / AttnRes route-pack split for a new case until the
-  case has enough proven reuse pressure.
-
-## Stage 1. Feature Analyzer
-
-Understand the requested feature before planning code changes.
-
-Treat DeepXiv as the preferred paper-intake assistant/source, but keep intake
-source-flexible when other paper feeds, GitHub/code signals, or user-provided
-sources improve coverage.
-
-The intake layer has two sub-steps:
-
-1. candidate discovery
-2. candidate scoring / triage
-
-You must identify:
-
-- the feature or trick summary
-- whether the input source is:
-  - paper text
-  - released code
-  - user natural-language description
-  - mixed evidence
-- feature category:
-  - recipe
-  - module
-  - system
-  - hybrid
-- `feature_bucket`
-- declared changes from the paper or request
-- implied changes from released code when available
-- uncertainties or missing implementation details
-- expected target model or baseline when visible
-- `integration_route`
-- `route_evidence`
-- `recommended_next_action`
-- `qualification_basis`
-- `source_status`
+## Routing principles
 
 Choose exactly one integration route:
 
@@ -115,249 +69,57 @@ Use these routing priorities:
 3. target model and workspace evidence
 4. safest minimal integration scope
 
-Select `mhc` when the request or evidence mentions mHC,
-manifold-constrained hyper-connections, residual-stream expansion and
-reduction, causal LLM blocks, or Hugging Face or Qwen-style decoder stacks.
+Use `generic-feature` for feature adaptations that do not need a proven
+specialized route pack.
 
-Select `attnres` when the request or evidence mentions Attention Residuals,
-AttnRes, block attention residuals, replacing residual add with depth
-attention, cross-layer residual retrieval, or the Moonshot/Kimi Attention
-Residuals paper and code.
+Select `mhc` when the request or evidence clearly matches manifold-constrained
+hyper-connections or residual-stream expansion/reduction for causal LLM blocks.
 
-Select `transmla` when the request or evidence mentions TransMLA, MLA
-conversion, converting GQA-style decoder models toward MLA-style attention,
-or attention / KV-cache conversion for Qwen-like causal LLMs.
+Select `attnres` when the request or evidence clearly matches Attention
+Residuals / AttnRes or depth-wise residual retrieval.
 
-Use `generic-feature` for all other feature adaptations.
+Select `transmla` when the request or evidence clearly matches TransMLA or
+MLA-conversion-style attention / KV-cache adaptation. Keep top-level handling
+minimal and load the TransMLA references for case detail instead of expanding
+`SKILL.md`.
 
-Build a structured `FeatureSpec` that includes `integration_route`,
-`route_evidence`, `feature_bucket`, `recommended_next_action`,
-`qualification_basis`, and `source_status`.
+## Bounded integration rules
 
-### Intake scoring / triage rubric
+- Prefer the smallest safe integration scope.
+- Preserve baseline-off behavior by default.
+- Prefer config deltas over hidden hardcoded behavior when possible.
+- Keep route-specific implementation detail in reference docs, not inline in
+  `SKILL.md`.
+- Record route-specific constraints and validations in the planning output.
+- Do not imply unrun validation as `pass`.
+- Do not widen a bounded proving case into broader runtime, accuracy, or
+  performance claims.
 
-Score or tag each candidate on:
-
-- `feature_bucket` — attention / cache / position / residual / adapter / other
-- `paper_clarity`
-- `code_availability`
-- `target_family_fit`
-- `integration_surface_clarity`
-- `bridge_value`
-- `verification_value`
-- `phase1_tractability`
-- `qualification_basis`
-- `source_status`
-- `recommended_next_action`
-
-Operational calibration:
-
-- Hard gates before extraction: `code_availability`, `target_family_fit`, and
-  `phase1_tractability` must not be low for a phase-1 proving candidate.
-- Ranking factors: `bridge_value`, `verification_value`,
-  `integration_surface_clarity`, and `paper_clarity` decide priority among
-  candidates that pass the gates.
-- Default routing behavior:
-  - any hard-gate failure -> `reject` or `watchlist`
-  - passes gates but weak ranking value -> `reference-code extraction`
-  - passes gates with strong `bridge_value` + `verification_value` + at least
-    medium `integration_surface_clarity` -> `proving candidate`
-  - promising but blocked by timing or ambiguity -> `watchlist`
-
-Use `TransMLA` as the first worked example for calibrating this rubric.
-
-## Stage 2. Integration Planner
-
-Plan how the feature should fit into the current codebase.
-
-You must inspect the local repository and determine:
-
-- which model or training path is being targeted
-- which files, modules, classes, configs, or registries are relevant
-- whether the feature can be introduced by config only
-- whether minimal source edits are required
-- whether the current repo already contains a similar implementation
-- the smallest safe integration scope
-- which parts of the baseline must remain fixed for fair comparison
-- route-specific constraints that must be preserved
-- route-specific validations that must run before handoff
-- a reference-code -> code-map -> patch-plan bridge
-
-Build an `IntegrationPlan` that records `route_specific_constraints`,
-`route_specific_validations`, and a `code_map_summary`.
-
-The code-map step must:
-
-1. identify the relevant reference repo or released implementation
-2. pin the reference scope and commit or tag for reproducibility
-3. map the feature to concrete source modules, configs, and entrypoints
-4. summarize the reusable implementation delta
-5. translate that delta into a target-repo patch plan
-
-The first verification scaffold should be treated as a minimum validation
-recording contract. Each slot should declare expected evidence and must use only
-these status values: `pass`, `fail`, `blocked`, `not_run`, or `partial`.
-Unexecuted slots must never be implied as `pass`.
+## Generic-feature vs specialized-route behavior
 
 Use the default planning flow for recipe, module, system, or hybrid feature
 patches that do not need a specialized route pack.
 
-### `mhc` route
-
-Keep the top-level workflow unchanged, but load the mHC route pack before
-finalizing the plan:
+When the selected route is specialized, keep the top-level workflow unchanged
+and load the matching references before finalizing the plan:
 
 - `references/mhc/mhc-implementation-pattern.md`
 - `references/mhc/mhc-validation-checklist.md`
 - `references/mhc/mhc-qwen3-case-study.md`
-
-Route rules:
-
-- Treat mHC as a residual-stream wrapper around attention and MLP, not as a
-  new attention mechanism.
-- Keep v1 scope to PyTorch or Hugging Face or causal LLM integrations.
-- Preserve the original non-mHC path behind config gating.
-- Expand streams after embeddings and reduce them before final norm or task
-  heads.
-- Record the route-specific constraints and validations in the
-  `IntegrationPlan` instead of inventing a fifth workflow stage.
-
-### `attnres` route
-
-Keep the top-level workflow unchanged, but load the Attention Residuals route
-pack before finalizing the plan:
-
 - `references/attnres/attnres-implementation-pattern.md`
 - `references/attnres/attnres-validation-checklist.md`
 - `references/attnres/attnres-qwen3-case-study.md`
 
-Route rules:
+For TransMLA, keep the workflow unchanged and use the TransMLA references as a
+representative bounded case. Do not let `SKILL.md` become the main storage
+location for TransMLA-specific experience.
 
-- Treat Attention Residuals as a residual-path replacement around attention
-  and MLP sites, not as a new token-attention kernel.
-- Keep v1 scope to PyTorch or Hugging Face or causal LLM integrations.
-- Preserve the original non-AttnRes path behind config gating.
-- Count logical residual sites explicitly. In decoder-only transformers, one
-  block usually contributes two sites: attention and MLP.
-- Register mixer modules on the model in `__init__` or equivalent construction
-  code. Do not create mixers inside `forward`.
-- Record the route-specific constraints and validations in the
-  `IntegrationPlan` instead of inventing a fifth workflow stage.
+## Shared phase-1 guidance
 
-### `transmla` route
-
-Keep the top-level workflow unchanged, but treat TransMLA as a phase-1 proving
-case for attention / KV-cache / model-conversion planning.
-
-Route rules:
-
-- Treat TransMLA as an attention-path and KV-cache conversion case, not as a
-  generic adapter patch.
-- Keep v1 scope to Qwen / DeepSeek-like decoder-only causal LLM families.
-- Preserve baseline-off behavior and the original attention path unless the
-  selected proving scope explicitly replaces it.
-- Make the reference-code -> code-map -> patch-plan bridge explicit because this
-  case is used to calibrate the intake rubric and combined helper scaffold.
-- Keep the first phase-1 materials compact; do not split TransMLA into a full
-  route-pack directory unless reuse pressure is proven.
-- A successful phase-1 bounded TransMLA result may stop at a default-off,
-  no-remap patch that is regeneration-backed, import/init-valid, and
-  minimal-forward-valid.
-- Do not treat that bounded result as a claim of full TransMLA migration,
-  checkpoint-remap compatibility, fuller MLA semantics, broader runtime
-  integration, or MindSpore-native completion.
-
-## Stage 3. Patch Builder
-
-Generate the minimal implementation patch.
-
-You must:
-
-- prefer the smallest change set that expresses the feature clearly
-- preserve existing baseline behavior unless the feature explicitly changes it
-- avoid unrelated refactors
-- emit config deltas when possible instead of hardcoding behavior
-- document uncertain areas in the output instead of guessing silently
-
-When the selected route is `mhc`, preserve the public hidden size, load and
-train entrypoints, and validation hooks expected by the route pack.
-
-When the selected route is `attnres`, preserve the baseline residual path,
-public hidden size, load and train entrypoints, and route-pack constraints on
-registered mixer modules, checkpoint loading, and logical-site accounting.
-
-When the selected route is `transmla`, preserve the proving-case goal: build a
-reusable conversion-oriented patch plan and keep the phase-1 artifact footprint
-small unless execution proves more structure is required.
-
-## Stage 4. Readiness Handoff and Report
-
-Do not stop after generating the patch.
-
-You must:
-
-- summarize what changed
-- describe which model path or components were touched
-- identify any unresolved uncertainty
-- recommend readiness validation on the updated workspace
-- prepare a concise handoff for `readiness-agent`
-- preserve the verification scaffold expectations and any need for
-  `accuracy-agent` handoff when correctness/drift remains open
-
-The handoff should preserve the route identity, including route-specific
-constraints and validation expectations.
-
-## Verification scaffold and admission gate
-
-Keep verification scaffold guidance and factory/template admission guidance
-coupled in phase 1 unless reuse proves they should split.
-
-Minimum verification scaffold:
-
-- `torch` smoke forward
-- `torch` backward / training-step sanity when relevant
-- `torch_npu` smoke forward
-- `torch_npu` backward / training-step sanity when relevant
-- MindSpore NPU smoke forward
-- MindSpore NPU backward / training-step sanity when relevant
-- shape/dtype consistency checks
-- feature on/off regression checks
-- standard accuracy-drift classification output
-
-Default helper rule:
-
-- phase 1 should default to one combined helper/scaffold script covering
-  adjacent intake/code-map/verification-generation needs unless execution proves
-  splitting is necessary
-
-Runnable vs scaffold-only boundary for phase 1:
-
-- Must be runnable:
-  - intake artifact generation
-  - code-map artifact generation
-  - verification scaffold/report generation
-  - at least one worked proving-case pass through the scaffold path
-- May remain scaffold-only:
-  - full automation of all framework execution steps
-  - automatic collection of every metric/check without manual assistance
-  - broad multi-case generation beyond the proving set
-
-Admission hard blockers:
-
-- minimum verification scaffold is incomplete
-- baseline-off behavior is not preserved
-- code-map artifact is missing
-- verification artifact is missing
-- target-family integration touchpoints are not identified
-- unresolved correctness/drift issue exists without explicit
-  `accuracy-agent` handoff status
-
-Admission warnings:
-
-- only one model-family instance has been validated
-- performance characterization is incomplete
-- some optional robustness checks are pending
-- paper/code ambiguity remains but does not block the validated path
+Keep shared admission, bounded-success, and reusable verification framing in the
+current shared phase-1 docs where they already live. Do not duplicate or
+scatter those rules into case-specific docs when they already belong to shared
+skill guidance.
 
 ## References
 
@@ -373,6 +135,9 @@ Load these references when needed:
 - `references/attnres/attnres-implementation-pattern.md`
 - `references/attnres/attnres-validation-checklist.md`
 - `references/attnres/attnres-qwen3-case-study.md`
+- `references/transmla/transmla-implementation-pattern.md`
+- `references/transmla/transmla-validation-checklist.md`
+- `references/transmla/transmla-case-study.md`
 
 ## Scripts
 
@@ -388,8 +153,6 @@ Use these helper scripts when useful:
 
 - Keep the top-level skill focused on feature analysis, route selection, and
   outcome shaping.
-- Do not turn route selection into a fifth workflow stage.
 - Keep route-specific implementation detail in the reference pack instead of
   expanding it inline in `SKILL.md`.
-- Calibrate the first artifact/rubric/scaffold decisions on `TransMLA` before
-  widening the phase-1 file footprint.
+- Keep this skill focused on bounded integration work and readiness handoff.
