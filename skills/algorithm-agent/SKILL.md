@@ -44,6 +44,8 @@ Run the workflow in this order:
 3. `patch-builder`
 4. `readiness-handoff-and-report`
 
+An optional bounded intake pre-stage may be used before this live patch flow for triage and entry decisions; once intake passes, execution returns to the four-stage patch path using `references/intake-prestage-and-triage.md`, `references/intake-prestage-verification-and-admission.md`, and `scripts/intake_prestage_artifact_helper.py`.
+
 Do not skip directly to patch generation.
 Do not turn route selection into a fifth workflow stage.
 
