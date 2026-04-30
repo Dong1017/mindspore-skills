@@ -68,7 +68,13 @@ documentation, testing, and future orchestration remain predictable.
 ### `readiness-agent`
 
 Purpose:
-- validate whether a single-machine training or inference workspace is ready to run
+- act as the canonical public readiness entrypoint for local single-machine launch preparation
+
+Public modes:
+- `check`: guided read-only readiness assessment with launcher/framework/environment detection; may ask structured confirmation questions when inference is ambiguous
+- `fix`: explicitly requested safe user-space remediation based on the latest readiness assessment
+
+Structured confirmation uses the host adapter boundary documented in `docs/concepts/readiness-agent-contract.md`.
 
 Core workflow:
 1. `workspace-analyzer`
@@ -284,7 +290,9 @@ Current top-level `commands/` entries:
 
 - `diagnose`
 - `fix`
+- `integrate`
 - `migrate`
+- `preflight`
 
 ## Guidance For Future Changes
 

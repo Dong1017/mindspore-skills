@@ -13,7 +13,7 @@ You are an expert MindSpore developer. Use the skills below to help developers w
 | api-helper | skills/api-helper/ | find API call chains and operator wiring in MindSpore codebase |
 | migrate-agent | skills/migrate-agent/ | top-level model migration entry that analyzes source repos, selects the correct migration route, and verifies the result |
 | operator-agent | skills/operator-agent/ | build `torch` or `mindspore` operators through custom-access or native-framework integration |
-| readiness-agent | skills/readiness-agent/ | check whether a local single-machine workspace is ready to train or run inference now, identify what is missing before execution, and optionally apply safe user-space readiness fixes |
+| readiness-agent | skills/readiness-agent/ | canonical public readiness entrypoint; supports `--mode check` for read-only launch-readiness assessment with launcher/framework/environment detection, and `--mode fix` for safe user-space remediation |
 | accuracy-agent | skills/accuracy-agent/ | diagnose accuracy regressions, drift, wrong results, and cross-platform mismatch after successful execution |
 | algorithm-agent | skills/algorithm-agent/ | adapt a paper feature or released reference implementation into an existing model codebase, including specialized routes such as mHC integration, and prepare it for readiness validation |
 | performance-agent | skills/performance-agent/ | diagnose throughput, latency, memory, utilization, dataloader, and communication bottlenecks after the workload already runs |
@@ -41,12 +41,13 @@ Load the appropriate SKILL.md when users mention:
 - **performance-agent**: "performance", "throughput", "latency", "memory", "utilization", "profiler", "trace", "communication overhead", "dataloader stall", "host launch"
 
 **Environment Setup:**
-- **readiness-agent**: "train check", "inference check", "preflight", "workspace readiness", "can this repo run", "can this repo train", "can this repo run inference", "can it run now", "check my environment", "what is missing before training", "what is missing before inference", "check env", "before training", "before inference", "fix my local environment", "fix my training environment", "missing model", "missing dataset", "missing train.py"
+- **readiness-agent**: use `--mode check` for "train check", "inference check", "preflight", "workspace readiness", "can this repo run", "can this repo train", "can this repo run inference", "can it run now", "check my environment", "what is missing before training", "what is missing before inference", "check env", "read-only readiness", "launcher detection", "what environment does this repo use", "which python should I use", "which cann path", "is this NPU workspace runnable", "single form readiness", "refresh readiness cache", and "llama factory readiness" requests; use `--mode fix` only when the user explicitly asks to fix the local environment or missing declared assets
 
 **Instructions**:
  - Do not give direct answers without following the skill workflow
  - Route operator implementation work to `operator-agent`
- - Route single-machine pre-run training or inference checks, missing-item analysis, and safe user-space readiness fixes to `readiness-agent`; do not use it for post-run crash or traceback diagnosis
+ - Route single-machine pre-run training or inference checks, missing-item analysis, safe user-space readiness fixes, and read-only launch-readiness assessment to `readiness-agent`; do not use it for post-run crash or traceback diagnosis
+ - Use `readiness-agent --mode check` for read-only launch-readiness assessment, launcher/framework/environment detection, and readiness cache refresh; use `readiness-agent --mode fix` for explicitly requested safe remediation
  - Route migration-first requests to `migrate-agent`; if the real user goal is "make this model run here", use `migrate-agent` to define the route and runtime requirements, then hand off to `readiness-agent`
  - Route runtime crashes and tracebacks after setup to `failure-agent`
  - Route wrong-result, drift, and regression cases after successful execution to `accuracy-agent`
@@ -87,9 +88,9 @@ This repository works with:
 |-------|------|-------------|
 | failure-agent | skills/failure-agent/ | diagnose MindSpore and PTA (torch_npu) training and runtime failures with evidence-backed root-cause validation |
 | accuracy-agent | skills/accuracy-agent/ | diagnose accuracy regressions, drift, wrong results, and cross-platform mismatch after successful execution |
-| readiness-agent | skills/readiness-agent/ | check whether a local single-machine workspace is ready to train or run inference now, identify what is missing before execution, and optionally apply safe user-space readiness fixes |
+| readiness-agent | skills/readiness-agent/ | canonical readiness entrypoint for `--mode check` and `--mode fix` |
 
 **Additional Activation Hints:**
 - **failure-agent**: "failure", "crash", "hang", "traceback", "ERR code", "CANN", "ACLNN", "torch_npu", "MindSpore error"
 - **accuracy-agent**: "accuracy", "regression", "drift", "wrong result", "loss mismatch", "cross-platform", "numerical", "precision"
-- **readiness-agent**: "train check", "inference check", "preflight", "readiness", "workspace readiness", "before running", "before training", "before inference", "can this repo run", "can it train", "can it run inference", "can it run now", "check my environment", "what is missing before training", "what is missing before inference", "fix my environment", "fix my local environment"
+- **readiness-agent**: "train check", "inference check", "preflight", "readiness", "workspace readiness", "before running", "before training", "before inference", "can this repo run", "can it train", "can it run inference", "can it run now", "check my environment", "what is missing before training", "what is missing before inference", "fix my environment", "fix my local environment", "read-only readiness", "launcher detection", "which python should I use", "which cann path", "is this NPU workspace runnable", "refresh readiness cache"
